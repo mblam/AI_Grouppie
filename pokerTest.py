@@ -33,4 +33,4 @@ elif(val2 < val1):
 else:
     print("Tie")
 
-print(evaluator.hand_summary(board, [hand1,hand2,hand3,hand4,hand5,hand6]))
+evaluator.hand_summary(board, [hand1,hand2,hand3,hand4,hand5,hand6])

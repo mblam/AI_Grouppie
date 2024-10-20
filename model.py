@@ -30,7 +30,7 @@ class Player():
     def printHand(self):
         Card.print_pretty_cards(self.hand)
 
-    def makePlay(self):
+    def makePlay(self, highestBet):
         print(self.name + ": ", end="")
         self.printHand()
         if self.AIPlayer:
@@ -43,18 +43,19 @@ class Player():
                 if play.lower() == "fold" or play.lower() == "f":
                     return -1
                 elif play.lower() == "play" or play.lower() == "p":
-
                     while True: # Keeps looping until valid set of actions occur
                         checkRaise = input("\tWould you like to check [c] or raise [r]: ")
                         if checkRaise.lower() == "raise" or checkRaise.lower() == "r":
-
-                            while True:     
-                                amount = int(input("\tHow much would you like to bet: "))
-                                if amount > self.money or amount < 1:   #check for negative bet amount or exceeding their chip total
-                                    print("\tinvalid amount of money, you have " + str(self.money) + " chips try inputting again")
-                                else: 
-                                    self.money -= amount    #remove money from self and add it to pot
-                                    return amount
+                            if self.money < highestBet:
+                                print("\tNot enough chips to raise,\n\tHighest bet is " + str(highestBet) + " you have " + str(self.money) + " chips")
+                            else:
+                                while True:     
+                                    amount = int(input("\tHow much would you like to bet: "))
+                                    if amount > self.money or amount < 1:   #check for negative bet amount or exceeding their chip total
+                                        print("\tinvalid amount of money, you have " + str(self.money) + " chips try inputting again")
+                                    else: 
+                                        self.money -= amount    #remove money from self and add it to pot
+                                        return amount
                                 
                         elif checkRaise.lower() == "check" or checkRaise.lower() == "c":
                             return  #TODO implement check logic
@@ -166,13 +167,13 @@ class Table():
 
             match i:
                 case 0:
-                    print("Dealing the first round")
+                    print("Dealing the flop")
                     self.dealFirstRound()
                 case 1:
-                    print("Dealing the second round")
+                    print("Dealing the turn")
                     self.dealSecondRound()
                 case 2:
-                    print("Dealing the third round")
+                    print("Dealing the river")
                     self.dealThirdRound()
             print("***********************\n")
 
@@ -182,6 +183,7 @@ class Table():
             # Set up tracking variables
             lastBetter = None
             currentPlayer = 0
+            highestBet = 0
 
             # While the bets are still increasing / being called
             while self.activePlayers[currentPlayer] != lastBetter:
@@ -193,7 +195,7 @@ class Table():
                     return
 
                 # Has the current player make a decision
-                bet = player.makePlay()
+                bet = player.makePlay(highestBet)
 
                 # Remove them from the list of active players if they folded
                 if bet == -1:

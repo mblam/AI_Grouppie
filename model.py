@@ -152,7 +152,9 @@ class Table():
 
                     self.pot += bet
 
-                    currentPlayer = (currentPlayer + 1) % len(self.activePlayers)
+                    currentPlayer += 1
+
+                currentPlayer = currentPlayer % len(self.activePlayers)
 
         hands = {}
         for player in self.activePlayers:

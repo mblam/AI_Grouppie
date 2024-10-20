@@ -62,6 +62,9 @@ class Player():
                             print("\tError, please input a valid action")
                 else:
                     print("\tError, please input a valid action")
+
+    def print(self):
+        print(self.name+" has $"+str(self.money))
                 
 
 
@@ -116,7 +119,7 @@ class Table():
         player.money += self.pot
         print(player.name + " wins $" + str(self.pot))
 
-    def startGame(self):
+    def startRound(self):
         # Set up initial values
         print("Starting the game")
         self.activePlayers = self.allPlayers.copy()
@@ -166,13 +169,13 @@ class Table():
 
             match i:
                 case 0:
-                    print("Dealing the first round")
+                    print("Dealing the flop")
                     self.dealFirstRound()
                 case 1:
-                    print("Dealing the second round")
+                    print("Dealing the turn")
                     self.dealSecondRound()
                 case 2:
-                    print("Dealing the third round")
+                    print("Dealing the river")
                     self.dealThirdRound()
             print("***********************\n")
 
@@ -218,6 +221,20 @@ class Table():
         bestHand = min(hands.keys())
         self.winner(hands[bestHand])
 
+    def startGame(self):
+        while True:
+            self.startRound()
+
+            again = input("Would you like to play again (y/n): ").lower()
+
+            if again == "y" or again == "yes":
+                continue
+            else:
+                print("\n\nHere are the overall results: ")
+                for player in self.allPlayers:
+                    print("\t",end="")
+                    player.print()
+                return
 
 # -------------------------Initialization-------------------------------
 t = Table()

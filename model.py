@@ -6,13 +6,12 @@ import Chip
 import sys
 
 STARTING_AMOUNT = 50
+BIG_BLIND_AMOUNT = 2
+SMALL_BLIND_AMOUNT = 1
 
 
 # TODO: Add error checking for betting values
-    # Must be > 0
     # Needs to at least call
-    # Cannot be more than the player has
-# TODO: Include option to choose how many players are AI v. not
 # TODO: Maybe include option for custom player names
 # TODO: Figure out GUI stuff (pygame)
 # TODO: Include logic for AI player
@@ -38,13 +37,32 @@ class Player():
             pass
             # TODO: Fill in with AI logic
         else:
-            play = input("\tWhat would you like to do (play or fold): ")
-            if play.lower() == "fold":
-                return -1
-            else:
-                amount = int(input("\tHow much would you like to bet: "))
-                self.money -= amount
-                return amount
+            while True: # Keeps looping until valid set of actions occur
+                print("\tYou have " + str(self.money) + " chips")
+                play = input("\tWhat would you like to do, play [p] or fold [f]: ")
+                if play.lower() == "fold" or play.lower() == "f":
+                    return -1
+                elif play.lower() == "play" or play.lower() == "p":
+
+                    while True: # Keeps looping until valid set of actions occur
+                        checkRaise = input("\tWould you like to check [c] or raise [r]: ")
+                        if checkRaise.lower() == "raise" or checkRaise.lower() == "r":
+
+                            while True:     
+                                amount = int(input("\tHow much would you like to bet: "))
+                                if amount > self.money or amount < 1:   #check for negative bet amount or exceeding their chip total
+                                    print("\tinvalid amount of money, you have " + str(self.money) + " chips try inputting again")
+                                else: 
+                                    self.money -= amount    #remove money from self and add it to pot
+                                    return amount
+                                
+                        elif checkRaise.lower() == "check" or checkRaise.lower() == "c":
+                            return  #TODO implement check logic
+                        else:
+                            print("\tError, please input a valid action")
+                else:
+                    print("\tError, please input a valid action")
+                
 
 
 # Object that represents the overall state of the game
@@ -109,6 +127,43 @@ class Table():
             # Deals to the table using the rules for the given round
             print()
             print("***********************")
+            
+            # Rotating assignment of Blinds
+            if i % 2 == 1:
+                big_blind = self.activePlayers[0]
+                small_blind = self.activePlayers[1]
+            else:
+                big_blind = self.activePlayers[1]
+                small_blind = self.activePlayers[0] 
+
+            # Initalize tracking variable
+            highestBet = 0
+
+            # Handle Blind logic
+            if small_blind.money < 1:
+                self.winner(big_blind)
+            else:
+                small_blind.money -= 1
+                self.pot += 1
+
+            if big_blind.money < 2:
+                if big_blind.money == 0:
+                    self.winner(small_blind)
+                else:
+                    big_blind.money -= 1
+                    self.pot += 1
+                    highestBet = 1
+            else:
+                big_blind.money -= 2
+                self.pot += 2  
+                highestBet = 2 
+
+            #Pre dealing logic
+            print("Pre Flop Betting")
+                #TODO implement
+            print("***********************\n")
+
+
             match i:
                 case 0:
                     print("Dealing the first round")
@@ -125,7 +180,6 @@ class Table():
             Card.print_pretty_cards(self.board)
 
             # Set up tracking variables
-            highestBet = 0
             lastBetter = None
             currentPlayer = 0
 
@@ -152,7 +206,9 @@ class Table():
 
                     self.pot += bet
 
-                    currentPlayer = (currentPlayer + 1) % len(self.activePlayers)
+                    currentPlayer += 1
+
+                currentPlayer = currentPlayer % len(self.activePlayers)
 
         hands = {}
         for player in self.activePlayers:

@@ -27,7 +27,7 @@ pygame.init()
 
 
 # Set up the drawing window
-screen = pygame.display.set_mode([500, 500])
+screen = pygame.display.set_mode([1500, 750])
 
 
 # Run until the user asks to quit
@@ -40,15 +40,31 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Fill the background with white
-    screen.fill((255, 0, 100))
+    # Fill the background with green
+    screen.fill((53, 101, 73))
 
 
-    # Draw a solid blue circle in the center
-    pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
+    # # Draw a solid blue circle in the center
+    # pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
 
-    draw_card(50,50,"J","images/Card_spade.png")
-    draw_card(170, 50, "Q","images/Card_diamond.png")
+    # give a brown border
+    pygame.draw.rect(screen, (111, 78, 55), (0,0,1500,750), 50)
+
+    # REMOVE LATER: line to indicate middle of screen
+    # pygame.draw.line(screen, (0,0,0), (750,0), (750, 1000))
+    # pygame.draw.line(screen, (0,0,0), (0,375), (1500,375))
+
+    draw_card(640,60,"J","images/Card_spade.png")
+    draw_card(760, 60, "Q","images/Card_diamond.png")
+
+    draw_card(640, 550, "K", "images/Card_heart.png")
+    draw_card(760, 550, "A", "images/Card_club.png")
+
+    draw_card(700, 305, "J", "images/Card_spade.png")
+    draw_card(820, 305, "J", "images/Card_spade.png")
+    draw_card(940, 305, "J", "images/Card_spade.png")
+    draw_card(580, 305, "J", "images/Card_spade.png")
+    draw_card(460, 305, "J", "images/Card_spade.png")
 
     # Flip the display
     pygame.display.flip()

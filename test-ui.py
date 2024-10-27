@@ -123,14 +123,26 @@ class Table():
     def dealFirstRound(self):
         burn = self.deck.draw(1)
         self.board = self.deck.draw(3)
+        cards = self.printBoard()
+        gameTest.firstRoundBoard(cards)
 
     def dealSecondRound(self):
         burn = self.deck.draw(1)
         self.board.append(self.deck.draw(1)[0])
+        cards = self.printBoard()
+        gameTest.secondRoundBoard(cards)
 
     def dealThirdRound(self):
         self.board.append(self.deck.draw(1)[0])
+        cards = self.printBoard()
+        gameTest.secondRoundBoard(cards)
 
+    def printBoard(self):
+        cards = []
+        for singleCard in self.board:
+            cards.append(Card.int_to_str(singleCard))
+        return cards
+        
     # Prints out the different players and their hands
     def printPlayers(self):
         for player in self.allPlayers:

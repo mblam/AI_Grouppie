@@ -4,7 +4,7 @@ from treys import Evaluator
 from treys import Deck
 import Chip
 import sys
-import pygame
+import gameTest
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -174,6 +174,7 @@ class Table():
 
         return highestBet
 
+    #how the betting starts 
     def rotate_betting(self, highestBet, preFlop=False):
         # Get the two active players
         players_in_round = [player for player in self.activePlayers if player.money > 0]
@@ -188,6 +189,7 @@ class Table():
             if current_player in folded_players:
                 current_player_index = (current_player_index + 1) % 2  # Only two players
                 continue
+
 
             print(f"{current_player.name}'s turn:")
 
@@ -313,38 +315,20 @@ class Table():
 
     def startGame(self):
         
-        pygame.init()
-        
+        # gameTest.startDisplay()
         
         running = True
         
         while running:
             
-            #Did the user click the window close button?
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-            
-            # Set up the drawing window
-            screen = pygame.display.set_mode([1500, 750])
-            
-            # Fill the background with green
-            screen.fill((53, 101, 73))
-            
-            # give a brown border
-            pygame.draw.rect(screen, (111, 78, 55), (0,0,1500,750), 50)
-            
-            #horizontoal card to the left side 
-            hori_image = pygame.image.load("images/Card_back.png")
-            hori_image = pygame.transform.scale(hori_image, (100, 140))
-            hori_image = pygame.transform.rotate(hori_image, 90)
-            screen.blit(hori_image, (150, 325))
-                    
-            pygame.display.flip()
-            
             self.startRound()
-
+            
             again = input("Would you like to play again (y/n): ").lower()
+            
+            # Did the user click the window close button?
+            for event in gameTest.pygame.event.get():
+                if event.type == gameTest.pygame.QUIT:
+                    running = False
 
             if again == "y" or again == "yes":
                 continue
@@ -353,10 +337,10 @@ class Table():
                 for player in self.allPlayers:
                     print("\t",end="")
                     # TODO make this print something useful
-                pygame.display.flip()
-                return
-        # Done! Time to quit.
-    pygame.quit()
+                    return
+                
+    # Done! Time to quit.
+    gameTest.pygame.quit()
 
 # -------------------------Initialization-------------------------------
 t = Table()

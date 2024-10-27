@@ -20,10 +20,20 @@ Card.print_pretty_cards(hand1)
 Card.print_pretty_cards(hand2)
 # Initialize evaluator
 evaluator = Evaluator()
-val1 = evaluator.evaluate(hand1,board)
-val2 = evaluator.evaluate(hand2,board)
+val1 = evaluator.evaluate(board, hand1)
+print(Card.int_to_str(hand1[0]))
+print(Card.get_rank_int(hand1[0]))
+print(Card.get_suit_int(hand1[1]))
+print(Card.get_rank_int(hand1[1]))
+val2 = evaluator.evaluate(board, hand2)
+print(Card.get_suit_int(hand2[0]))
+print(Card.get_rank_int(hand2[0]))
+print(Card.get_suit_int(hand2[1]))
+print(Card.get_rank_int(hand2[1]))
 print("1: ",val1)
 print("2: ",val2)
+print(evaluator.class_to_string(evaluator.get_rank_class(val1)))
+print(evaluator.class_to_string(evaluator.get_rank_class(val2)))
 
 # Lower values represent better hands
 if(val1 < val2):

@@ -63,7 +63,19 @@ while running:
     draw_card_upside_down(760, 60) #AI second card position
     draw_card(640, 550, "K", "images/Card_heart.png") #Player first card position
     draw_card(760, 550, "A", "images/Card_club.png") #Player second card position
-
+    
+    # First Round 
+    # draw_card(580, 305, "Q", "images/Card_spade.png") #First card table position
+    # draw_card(700, 305, "8", "images/Card_spade.png") #Second card table position
+    # draw_card(820, 305, "5", "images/Card_spade.png") #Third card table position
+    
+    # Second Round
+    # draw_card(460, 305, "Q", "images/Card_spade.png") #First card table position
+    # draw_card(580, 305, "8", "images/Card_spade.png") #Second card table position
+    # draw_card(700, 305, "5", "images/Card_spade.png") #Third card table position
+    # draw_card_upside_down(820, 305) #Fourth card table position
+    
+    # Full Position
     draw_card(460, 305, "Q", "images/Card_spade.png") #First card table position
     draw_card(580, 305, "8", "images/Card_spade.png") #Second card table position
     draw_card(700, 305, "5", "images/Card_spade.png") #Third card table position

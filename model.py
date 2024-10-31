@@ -31,6 +31,7 @@ class Player:
         self.hand = []
         self.name = name
         self.money = STARTING_AMOUNT
+        self.money_at_round_start = self.money
         self.AIPlayer = ai
         self.bet = 0
         self.color = color
@@ -42,11 +43,11 @@ class Player:
     def printHand(self):
         Card.print_pretty_cards(self.hand)
 
-    def betting(self, highestBet, preFlop=False):
+    def betting(self, highestBet, board, preFlop=False):
         # Handle the logic if the player is being controlled by the AI
         if self.AIPlayer:
             # AI logic
-            amount = aiBetting(self, highestBet, preFlop)
+            amount = aiBetting(self, highestBet, preFlop, board)
 
             if amount == -1:  # Short circuit if folding
                 return amount
@@ -220,7 +221,7 @@ class Table():
                 print("Cards on the table: ", end="")
                 Card.print_pretty_cards(self.board)
 
-            bet = current_player.betting(highestBet, preFlop)
+            bet = current_player.betting(highestBet, self.board, preFlop)
 
             if bet == -1:  # Player folds
                 folded_players.add(current_player)
@@ -271,6 +272,7 @@ class Table():
         # Error catching
         for player in self.activePlayers:
             player.bet = 0
+            player.money_at_round_start = player.money
 
         for i in range(4):
             print()

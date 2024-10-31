@@ -5,6 +5,7 @@ from treys import Deck
 import pkgutil
 import Chip
 import sys
+from aiLogic import aiBetting
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -15,7 +16,6 @@ SMALL_BLIND_AMOUNT = 1
     # Needs to at least call
 # TODO: Maybe include option for custom player names
 # TODO: Figure out GUI stuff (pygame)
-# TODO: Include logic for AI player
 
 # If termcolor is installed, use that when printing the text for the player's turn
 # If it isn't installed, just print normally
@@ -34,6 +34,7 @@ class Player:
         self.AIPlayer = ai
         self.bet = 0
         self.color = color
+        if ai: self.name += " (AI)"
 
     def getCard(self, card):
         self.hand.append(card)
@@ -44,7 +45,15 @@ class Player:
     def betting(self, highestBet, preFlop=False):
         # Handle the logic if the player is being controlled by the AI
         if self.AIPlayer:
-            return -1 # Always folds (for now)
+            # AI logic
+            amount = aiBetting(self, highestBet, preFlop)
+
+            if amount == -1:  # Short circuit if folding
+                return amount
+            else:  # Modify class members appropriately
+                self.bet += amount
+                self.money -= amount
+                return self.bet
 
         print("Hand" + ": ", end="")
         self.printHand()
@@ -124,9 +133,9 @@ class Table():
 
         for i in range(numPlayers):
             if i < numAI:
-                self.allPlayers.append(Player("Player "+str(i + 1)+" (AI)", True, color="blue"))
+                self.allPlayers.append(Player("Player "+str(i + 1), True, color="blue"))
             else:
-                self.allPlayers.append(Player("Player " + str(i + 1), color="red"))
+                self.allPlayers.append(Player("Player " + str(i + 1), False, color="red"))
         self.dealCardsToPlayers()
 
     # Deal cards to all players one at a time
@@ -342,7 +351,8 @@ class Table():
                     # TODO make this print something useful
                 return
 
+
 # -------------------------Initialization-------------------------------
 t = Table()
-t.initializePlayers(2, 0)
+t.initializePlayers(2, 1)
 t.startGame()

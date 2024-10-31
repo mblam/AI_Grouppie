@@ -2,6 +2,7 @@ import treys
 from treys import Card
 from treys import Evaluator
 from treys import Deck
+import pkgutil
 import Chip
 import sys
 
@@ -16,14 +17,23 @@ SMALL_BLIND_AMOUNT = 1
 # TODO: Figure out GUI stuff (pygame)
 # TODO: Include logic for AI player
 
+# If termcolor is installed, use that when printing the text for the player's turn
+# If it isn't installed, just print normally
+if pkgutil.find_loader('termcolor') is not None:
+    from termcolor import colored
+else:
+    def colored(string, color):
+        return string
 
-class Player():
-    def __init__(self, name, ai=False):
+
+class Player:
+    def __init__(self, name, ai=False, color=None):
         self.hand = []
         self.name = name
         self.money = STARTING_AMOUNT
         self.AIPlayer = ai
         self.bet = 0
+        self.color = color
 
     def getCard(self, card):
         self.hand.append(card)
@@ -32,6 +42,9 @@ class Player():
         Card.print_pretty_cards(self.hand)
 
     def betting(self, highestBet, preFlop=False):
+        # Handle the logic if the player is being controlled by the AI
+        if self.AIPlayer:
+            return -1 # Always folds (for now)
 
         print("Hand" + ": ", end="")
         self.printHand()
@@ -104,13 +117,16 @@ class Table():
         self.rotator = 0
 
     # Initializes player objects and deals cards to them
-    def initializePlayers(self, numPlayers):
+    def initializePlayers(self, numPlayers, numAI):
         if numPlayers <= 0:
             sys.tracebacklimit = 0
             raise Exception("Invalid number of players")
 
         for i in range(numPlayers):
-            self.allPlayers.append(Player("Player " + str(i + 1)))
+            if i < numAI:
+                self.allPlayers.append(Player("Player "+str(i + 1)+" (AI)", True, color="blue"))
+            else:
+                self.allPlayers.append(Player("Player " + str(i + 1), color="red"))
         self.dealCardsToPlayers()
 
     # Deal cards to all players one at a time
@@ -188,7 +204,8 @@ class Table():
                 current_player_index = (current_player_index + 1) % 2  # Only two players
                 continue
 
-            print(f"{current_player.name}'s turn:")
+            print()
+            print(colored(f"{current_player.name}'s turn:", current_player.color))
 
             if not preFlop:  # Print board if cards are on board
                 print("Cards on the table: ", end="")
@@ -327,5 +344,5 @@ class Table():
 
 # -------------------------Initialization-------------------------------
 t = Table()
-t.initializePlayers(2)
+t.initializePlayers(2, 0)
 t.startGame()

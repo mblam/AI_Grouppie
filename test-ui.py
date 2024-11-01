@@ -26,6 +26,7 @@ class Player():
         self.money = STARTING_AMOUNT
         self.AIPlayer = ai
         self.bet = 0
+        self.display = []
 
     def getCard(self, card):
         self.hand.append(card)
@@ -34,17 +35,16 @@ class Player():
         Card.print_pretty_cards(self.hand)
     
     def getCurrCards(self):
-        cards = []
         for singleCard in self.hand:
-            cards.append(Card.int_to_str(singleCard))
-        return cards
+            self.display.append(Card.int_to_str(singleCard))
 
     def betting(self, highestBet, preFlop=False):
 
         print("Hand" + ": ", end="")
         self.printHand()
-        cards = self.getCurrCards()
-        gameTest.printPlayerHand(self.name, cards)
+        if len(self.display) == 0:
+            self.getCurrCards()
+            gameTest.printPlayerHand(self.name, self.display)
         print(f"\tYou have {self.money} chips.")
         print(f"\tThe highest bet is {highestBet} chips.")
         
@@ -338,7 +338,7 @@ class Table():
         
         #Set up for the UI
         pygame.init()
-        screen = pygame.display.set_mode((1500, 750))
+        pygame.display.set_mode((1500, 750))
         gameTest.startDisplay()
         
         running = True

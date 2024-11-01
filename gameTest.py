@@ -33,7 +33,6 @@ def draw_card(x,y,card_name,width=CARD_WIDTH,height=CARD_WIDTH*1.4):
 def startDisplay():
     
     screen = pygame.display.get_surface()
-    print(screen)
     
     if pygame.display.get_init:
     
@@ -53,8 +52,8 @@ def startDisplay():
 
 #prints for the first round    
 def firstRoundBoard(cards):
+    print("prints the cards for the first round")
     i = 0
-    startDisplay()
     for single_card in cards:
         if i == 0:
             draw_card(580, 305, "images/Playing_Cards/PNG-cards-1.3/" + single_card  + ".png") #First card table position
@@ -93,6 +92,7 @@ def thirdRoundBoard(cards):
             draw_card(940, 305, "images/Playing_Cards/PNG-cards-1.3/" + single_card  + ".png") #Third card table position
         i += 1
 
+#prints the players hands
 def printPlayerHand(name, cards):
     i = 0
     y = 0
@@ -105,3 +105,4 @@ def printPlayerHand(name, cards):
             draw_card(640, y, "images/Playing_Cards/PNG-cards-1.3/" + single_card  + ".png")
         else:
             draw_card(760, y, "images/Playing_Cards/PNG-cards-1.3/" + single_card  + ".png")
+        i += 1

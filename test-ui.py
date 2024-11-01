@@ -5,6 +5,7 @@ from treys import Deck
 import Chip
 import sys
 import gameTest
+import pygame
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -31,11 +32,19 @@ class Player():
 
     def printHand(self):
         Card.print_pretty_cards(self.hand)
+    
+    def getCurrCards(self):
+        cards = []
+        for singleCard in self.hand:
+            cards.append(Card.int_to_str(singleCard))
+        return cards
 
     def betting(self, highestBet, preFlop=False):
 
         print("Hand" + ": ", end="")
         self.printHand()
+        cards = self.getCurrCards()
+        gameTest.printPlayerHand(self.name, cards)
         print(f"\tYou have {self.money} chips.")
         print(f"\tThe highest bet is {highestBet} chips.")
         
@@ -123,21 +132,21 @@ class Table():
     def dealFirstRound(self):
         burn = self.deck.draw(1)
         self.board = self.deck.draw(3)
-        cards = self.printBoard()
+        cards = self.printCurrCards()
         gameTest.firstRoundBoard(cards)
 
     def dealSecondRound(self):
         burn = self.deck.draw(1)
         self.board.append(self.deck.draw(1)[0])
-        cards = self.printBoard()
+        cards = self.printCurrCards()
         gameTest.secondRoundBoard(cards)
 
     def dealThirdRound(self):
         self.board.append(self.deck.draw(1)[0])
-        cards = self.printBoard()
+        cards = self.printCurrCards()
         gameTest.secondRoundBoard(cards)
 
-    def printBoard(self):
+    def printCurrCards(self):
         cards = []
         for singleCard in self.board:
             cards.append(Card.int_to_str(singleCard))
@@ -327,7 +336,10 @@ class Table():
 
     def startGame(self):
         
-        # gameTest.startDisplay()
+        #Set up for the UI
+        pygame.init()
+        screen = pygame.display.set_mode((1500, 750))
+        gameTest.startDisplay()
         
         running = True
         

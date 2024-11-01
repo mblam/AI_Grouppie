@@ -122,13 +122,14 @@ class Table():
     def dealFirstRound(self):
         burn = self.deck.draw(1)
         self.board = self.deck.draw(3)
-
+            
     def dealSecondRound(self):
         burn = self.deck.draw(1)
         self.board.append(self.deck.draw(1)[0])
 
     def dealThirdRound(self):
         self.board.append(self.deck.draw(1)[0])
+    
 
     # Prints out the different players and their hands
     def printPlayers(self):

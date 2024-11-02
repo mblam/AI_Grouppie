@@ -4,7 +4,7 @@ from treys import Evaluator
 from treys import Deck
 import Chip
 import sys
-import gameTest
+import display.gameTest as gameTest
 import pygame
 
 STARTING_AMOUNT = 50
@@ -65,14 +65,17 @@ class Player():
                     return -1  # Player folds
                 else:
                     print("\tInvalid choice, please try again.")
+            #general betting
             else:
                 action = input("\tWould you like to check [c], call [ca], raise [r], or fold [f]: ")
+                #if they check (means they want to pass the action to the next player)
                 if action.lower() in ["c", "check"]:
                     if highestBet > 0 and highestBet != self.bet:
                         print("\tYou cannot check, there is already a bet.")
                     else:
                         print(f"\t{self.name} checks.")
                         return 0  # Player checks
+                #if they call (want to match a highest bet made by another player)
                 elif action.lower() in ["ca", "call"]:
                     amount_to_call = highestBet - self.bet
                     self.money -= amount_to_call
@@ -80,6 +83,7 @@ class Player():
                     self.bet = highestBet  # Update current bet to match the highest
                     print(f"\t{self.name} calls {amount_to_call} chips.")
                     return highestBet  # Player calls
+                #if they raise (raise the bet higher)
                 elif action.lower() in ["r", "raise"]:
                     while True:
                         amount = int(input("\tHow much would you like to raise: "))
@@ -93,6 +97,7 @@ class Player():
                             if preFlop:    # handles the money they already put up on the preflop
                                 return self.bet
                             return amount  # Player raises
+                # if they fold (they stop playing for the hand)
                 elif action.lower() in ["f", "fold"]:
                     print(f"\t{self.name} folds.")
                     return -1  # Player folds

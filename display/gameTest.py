@@ -4,23 +4,6 @@ import pygame
 
 CARD_WIDTH = 100
 
-# def draw_card(x,y,text,image_name,width=CARD_WIDTH,height=CARD_WIDTH*1.4):
-#     screen = pygame.display.set_mode([1500, 750])
-#     pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(x,y,width,height),border_radius=7)
-
-
-#     pygame.font.init()  # you have to call this at the start,
-#     # if you want to use this module.
-#     card_font = pygame.font.SysFont('Arial Bold', int(width*.6))
-#     card_val = card_font.render(text,False,(0,0,0))
-
-#     screen.blit(card_val, (x + width/2 - int(width*.3),y + height/2-card_val.get_height()/2))
-
-#     image = pygame.image.load(image_name)  # Load in image
-#     image = pygame.transform.scale(image,
-#                                (card_val.get_height() * image.get_width() / image.get_height(), card_val.get_height()))  # Scale it to whatever dimenstions you want
-#     screen.blit(image, (x + width/2, y + height/2 - image.get_height()/2))  # Print to the screen
-
 def draw_card(x,y,card_name,width=CARD_WIDTH,height=CARD_WIDTH*1.4):
     screen = pygame.display.get_surface()
     image = pygame.image.load(card_name)
@@ -34,7 +17,7 @@ def startDisplay():
     
     screen = pygame.display.get_surface()
     
-    if pygame.display.get_init:
+    if pygame.display.get_init():
     
         # Fill the background with green
         screen.fill((53, 101, 73))

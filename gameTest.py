@@ -48,11 +48,19 @@ def startDisplay():
         hori_image = pygame.transform.rotate(hori_image, 90)
         screen.blit(hori_image, (150, 325))
         
+        #place all of the cards in the center but with the back
+        draw_card(460, 305, "images/Card_back.png")
+        draw_card(580, 305, "images/Card_back.png")
+        draw_card(700, 305, "images/Card_back.png")
+        draw_card(820, 305, "images/Card_back.png")
+        draw_card(940, 305, "images/Card_back.png")
+        
         pygame.display.flip()
 
 #prints for the first round    
 def firstRoundBoard(cards):
     print("prints the cards for the first round")
+    print(cards)
     i = 0
     for single_card in cards:
         if i == 0:
@@ -65,6 +73,8 @@ def firstRoundBoard(cards):
 
 #prints for the first round    
 def secondRoundBoard(cards):
+    print("prints the cards for the first round")
+    print(cards)
     i = 0
     for single_card in cards:
         if i == 0:
@@ -78,6 +88,8 @@ def secondRoundBoard(cards):
         i += 1
 
 def thirdRoundBoard(cards):
+    print("prints the cards for the first round")
+    print(cards)
     i = 0
     for single_card in cards:
         if i == 0:
@@ -94,6 +106,8 @@ def thirdRoundBoard(cards):
 
 #prints the players hands
 def printPlayerHand(name, cards):
+    print(name)
+    print(cards)
     i = 0
     y = 0
     if name == "Player 1":

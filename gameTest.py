@@ -58,19 +58,25 @@ while running:
     # REMOVE LATER: line to indicate middle of screen
     #750 horizontal
     #375 vertical 
-    pygame.draw.line(screen, (0,0,0), (750,0), (750, 1000))
+    # pygame.draw.line(screen, (0,0,0), (750,0), (750, 1000))
     pygame.draw.line(screen, (0,0,0), (0,375), (1500,375))
+
     font = pygame.font.SysFont(None, 24)
-    img1 = font.render('Player 2\'s Earnings: ', True, (255,255,255))
-    img2 = font.render('Player 1\'s Earnings', True, (255,255,255))
-    print(str(img1.get_width()))
-    screen.blit(img1, (25, 20))
-    # screen.blit(img2, (, ))
+    p2_earnings = font.render('Player 2\'s Earnings: $10,000', True, (255,255,255))
+    p1_earnings = font.render('Player 1\'s Earnings: $10,000', True, (255,255,255))
+    screen.blit(p2_earnings, (25, 20))
+    screen.blit(p1_earnings, (25, 720))
 
-    # imp = pygame.image.load("white_chip.png")
-    # Using blit to copy content from one surface to other
-    # screen.blit(imp, (0, 0))
+    w_chip = pygame.transform.scale(pygame.image.load("chip_folder\white_chip.png"), (50, 50))
+    screen.blit(w_chip, (50, 50))
+    screen.blit(w_chip, (50, 650))
+    chip_amt = font.render('50', True, (255,255,255))
+    screen.blit(chip_amt, (110,67))
+    screen.blit(chip_amt, (110,667))
 
+    font2 = pygame.font.SysFont(None, 36)
+    main_pot = font2.render('The Pot: $99999', True, (255,255,255))
+    screen.blit(main_pot, (1250, 363))
 
     draw_card_upside_down(640,60) #AI first card position
     draw_card_upside_down(760, 60) #AI second card position

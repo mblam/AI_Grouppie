@@ -56,8 +56,21 @@ while running:
     pygame.draw.rect(screen, (111, 78, 55), (0,0,1500,750), 50)
 
     # REMOVE LATER: line to indicate middle of screen
-    # pygame.draw.line(screen, (0,0,0), (750,0), (750, 1000))
-    # pygame.draw.line(screen, (0,0,0), (0,375), (1500,375))
+    #750 horizontal
+    #375 vertical 
+    pygame.draw.line(screen, (0,0,0), (750,0), (750, 1000))
+    pygame.draw.line(screen, (0,0,0), (0,375), (1500,375))
+    font = pygame.font.SysFont(None, 24)
+    img1 = font.render('Player 2\'s Earnings: ', True, (255,255,255))
+    img2 = font.render('Player 1\'s Earnings', True, (255,255,255))
+    print(str(img1.get_width()))
+    screen.blit(img1, (25, 20))
+    # screen.blit(img2, (, ))
+
+    # imp = pygame.image.load("white_chip.png")
+    # Using blit to copy content from one surface to other
+    # screen.blit(imp, (0, 0))
+
 
     draw_card_upside_down(640,60) #AI first card position
     draw_card_upside_down(760, 60) #AI second card position

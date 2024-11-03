@@ -1,7 +1,5 @@
 import pygame
 
-font = pygame.font.SysFont(None, 12)
-
 #hex colors used
 black = (0, 0, 0)
 gray = (128, 128, 128)
@@ -19,19 +17,32 @@ class gameButton():
         self.click = False
     
     def createButton(self):
+        #creates the font
+        font = pygame.font.SysFont(None, 24)
+        
+        #get the location of the mouse
+        mouse = pygame.mouse.get_pos()
+        
         #gets the font
-        text = font.render(self.title, True, black)
+        text = font.render(self.title, True, light_gray)
         
         #gets the coordinates for the text
         button_text = text.get_rect(center=(self.surface.get_width()/2, self.surface.get_height()/2))
         
+        if self.rect.collidepoint(mouse):
+            pygame.draw.rect(self.surface, gray, self.rect)
+        
         #creates the button
-        pygame.draw.rect(self.surface, gray, self.rect)
+        pygame.draw.rect(self.surface, black, self.rect)
         
         #display text on button surface
         self.surface.blit(text, button_text)
         
         #displays the acatual button
         pygame.display.get_surface().blit(self.surface, (self.x_pos, self.y_pos))
+        
+        #get the location of the mouse
+        mouse = pygame.mouse.get_pos()
+        
         
         

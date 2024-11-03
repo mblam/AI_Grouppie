@@ -4,8 +4,9 @@ from treys import Evaluator
 from treys import Deck
 import Chip
 import sys
-import display.gameTest as gameTest
+import gameTest as gameTest
 import pygame
+import display.cardDisplay as cd
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -44,7 +45,7 @@ class Player():
         self.printHand()
         if len(self.display) == 0:
             self.getCurrCards()
-            gameTest.printPlayerHand(self.name, self.display)
+            cd.printPlayerHand(self.name, self.display)
         print(f"\tYou have {self.money} chips.")
         print(f"\tThe highest bet is {highestBet} chips.")
         
@@ -138,18 +139,18 @@ class Table():
         burn = self.deck.draw(1)
         self.board = self.deck.draw(3)
         cards = self.printCurrCards()
-        gameTest.firstRoundBoard(cards)
+        cd.firstRoundBoard(cards)
 
     def dealSecondRound(self):
         burn = self.deck.draw(1)
         self.board.append(self.deck.draw(1)[0])
         cards = self.printCurrCards()
-        gameTest.secondRoundBoard(cards)
+        cd.secondRoundBoard(cards)
 
     def dealThirdRound(self):
         self.board.append(self.deck.draw(1)[0])
         cards = self.printCurrCards()
-        gameTest.secondRoundBoard(cards)
+        cd.secondRoundBoard(cards)
 
     def printCurrCards(self):
         cards = []
@@ -342,14 +343,12 @@ class Table():
 
     def startGame(self):
         
-        #Set up for the UI
-        pygame.init()
-        pygame.display.set_mode((1500, 750))
-        gameTest.startDisplay()
         
         running = True
         
         while running:
+            
+            gameTest.gameTest()
             
             self.startRound()
             
@@ -375,4 +374,6 @@ class Table():
 # -------------------------Initialization-------------------------------
 t = Table()
 t.initializePlayers(2)
+pygame.init()
+pygame.display.set_mode((1500, 750))
 t.startGame()

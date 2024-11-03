@@ -59,7 +59,7 @@ while running:
     #750 horizontal
     #375 vertical 
     # pygame.draw.line(screen, (0,0,0), (750,0), (750, 1000))
-    pygame.draw.line(screen, (0,0,0), (0,375), (1500,375))
+    # pygame.draw.line(screen, (0,0,0), (0,375), (1500,375))
 
     font = pygame.font.SysFont(None, 24)
     p2_earnings = font.render('Player 2\'s Earnings: $10,000', True, (255,255,255))

@@ -367,7 +367,7 @@ class Table():
                 for player in self.allPlayers:
                     print("\t",end="")
                     # TODO make this print something useful
-                    return
+                    running = False
                 
     # Done! Time to quit.
     gameTest.pygame.quit()

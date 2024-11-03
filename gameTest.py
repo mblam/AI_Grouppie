@@ -75,8 +75,8 @@ while running:
     screen.blit(chip_amt, (110,667))
 
     font2 = pygame.font.SysFont(None, 36)
-    main_pot = font2.render('The Pot: $99999', True, (255,255,255))
-    screen.blit(main_pot, (1250, 363))
+    main_pot = font2.render('The Pot: $99,999', True, (255,255,255))
+    screen.blit(main_pot, (1245, 363))
 
     draw_card_upside_down(640,60) #AI first card position
     draw_card_upside_down(760, 60) #AI second card position

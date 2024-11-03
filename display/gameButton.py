@@ -15,7 +15,7 @@ class gameButton():
         self.y_pos= y_pos
         self.title = title
         self.rect = pygame.Rect(x_pos, y_pos, width, height)
-        self.surface = pygame.Surface(width, height)
+        self.surface = pygame.Surface((width, height))
         self.click = False
     
     def createButton(self):

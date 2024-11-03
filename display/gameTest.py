@@ -1,8 +1,11 @@
-# Import and initialize the pygame library
 import pygame
-# Simple pygame program
 
 CARD_WIDTH = 100
+
+#hex colors used
+black = (0, 0, 0)
+gray = (128, 128, 128)
+light_gray = (192, 192, 192)
 
 def draw_card(x,y,card_name,width=CARD_WIDTH,height=CARD_WIDTH*1.4):
     screen = pygame.display.get_surface()
@@ -39,6 +42,11 @@ def startDisplay():
         draw_card(940, 305, "images/Card_back.png")
         
         pygame.display.flip()
+        
+        gameButton(415, 705, 80, 40, "check").createButton()
+        gameButton(615, 705, 80, 40, "call").createButton()
+        gameButton(815, 705, 80, 40, "raise").createButton()
+        gameButton(1015, 705, 80, 40, "fold").createButton()
 
 #prints for the first round    
 def firstRoundBoard(cards):
@@ -103,3 +111,30 @@ def printPlayerHand(name, cards):
         else:
             draw_card(760, y, "images/Playing_Cards/PNG-cards-1.3/" + single_card  + ".png")
         i += 1
+        
+class gameButton():
+
+    def __init__(self, x_pos, y_pos, width, height, title):
+        self.x_pos = x_pos
+        self.y_pos= y_pos
+        self.title = title
+        self.rect = pygame.Rect(x_pos, y_pos, width, height)
+        self.surface = pygame.Surface((width, height))
+        self.click = False
+    
+    def createButton(self):
+        font = pygame.font.SysFont(None, 24)
+        #gets the font
+        text = font.render(self.title, True, gray)
+        
+        #gets the coordinates for the text
+        button_text = text.get_rect(center=(self.surface.get_width()/2, self.surface.get_height()/2))
+        
+        #creates the button
+        pygame.draw.rect(self.surface, gray, self.rect)
+        
+        #display text on button surface
+        self.surface.blit(text, button_text)
+        
+        #displays the acatual button
+        pygame.display.get_surface().blit(self.surface, (self.x_pos, self.y_pos))

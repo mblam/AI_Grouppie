@@ -279,6 +279,7 @@ class Table():
             print()
             print("***********************")
 
+            #This is for Pre-Flop
             if i == 0:
                 self.smallBlind = self.activePlayers[self.rotator]
                 self.bigBlind = self.activePlayers[(self.rotator + 1) % len(self.activePlayers)]

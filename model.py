@@ -201,7 +201,7 @@ class Table():
 
     def rotate_betting(self, highestBet, preFlop=False):
         # Get the two active players
-        players_in_round = [player for player in self.activePlayers if player.money > 0]
+        players_in_round = [player for player in self.activePlayers]
         folded_players = set()
         current_player_index = self.rotator
 
@@ -215,41 +215,45 @@ class Table():
                 continue
 
             print()
-            print(colored(f"{current_player.name}'s turn:", current_player.color))
+            print(colored(f"{current_player.name}'s turn:"))
+            # Simply skips the current player if they don't have any money to bet
+            if current_player.money == 0:
+                print(f"You have 0 chips and cannot make a play.")
+            # Otherwise, bet as normal
+            else:
+                if not preFlop:  # Print board if cards are on board
+                    print("Cards on the table: ", end="")
+                    Card.print_pretty_cards(self.board)
 
-            if not preFlop:  # Print board if cards are on board
-                print("Cards on the table: ", end="")
-                Card.print_pretty_cards(self.board)
+                bet = current_player.betting(highestBet, preFlop)
 
-            bet = current_player.betting(highestBet, self.board, preFlop)
+                if bet == -1:  # Player folds
+                    folded_players.add(current_player)
+                    print(f"{current_player.name} folds.")
+                    # The other player wins
+                    remaining_player = players_in_round[1 - current_player_index]
+                    print(f"{remaining_player.name} wins, {current_player.name} folded.")
+                    if not preFlop and not highestBet == 2:
+                        self.pot += highestBet
+                    self.winner(remaining_player)
+                    return -1
+                elif bet > highestBet:  # Player raises
+                    # Update the pot with the amount of the raise
+                    self.pot += bet - current_player.bet  # Add the difference between new bet and previous bet
+                    highestBet = bet  # Update the highest bet to the new raise
+                    print(f"{current_player.name} raises to {bet} chips.")
+                elif bet == 2 and preFlop and current_player == self.smallBlind:  # Edge case where pot doesnt increase when calling big blind
+                    self.pot += 1
+                else:  # Player calls or checks
+                    if bet < highestBet:  # They are calling the difference
+                        call_amount = highestBet - current_player.bet
+                        self.pot += call_amount  # Accumulate the pot with the call amount
+                        print(f"{current_player.name} calls {call_amount} chips.")
+                    else:
+                        print(f"{current_player.name} checks.")
 
-            if bet == -1:  # Player folds
-                folded_players.add(current_player)
-                print(f"{current_player.name} folds.")
-                # The other player wins
-                remaining_player = players_in_round[1 - current_player_index]
-                print(f"{remaining_player.name} wins, {current_player.name} folded.")
-                if not preFlop and not highestBet == 2:
-                    self.pot += highestBet
-                self.winner(remaining_player)
-                return -1
-            elif bet > highestBet:  # Player raises
-                # Update the pot with the amount of the raise
-                self.pot += bet - current_player.bet  # Add the difference between new bet and previous bet
-                highestBet = bet  # Update the highest bet to the new raise
-                print(f"{current_player.name} raises to {bet} chips.")
-            elif bet == 2 and preFlop and current_player == self.smallBlind:  # Edge case where pot doesnt increase when calling big blind
-                self.pot += 1
-            else:  # Player calls or checks
-                if bet < highestBet:  # They are calling the difference
-                    call_amount = highestBet - current_player.bet
-                    self.pot += call_amount  # Accumulate the pot with the call amount
-                    print(f"{current_player.name} calls {call_amount} chips.")
-                else:
-                    print(f"{current_player.name} checks.")
-
-            # Ensure the player's bet is updated correctly
-            current_player.bet = highestBet  # Match the highest bet
+                # Ensure the player's bet is updated correctly
+                current_player.bet = highestBet  # Match the highest bet
 
             # Move to the next player
             current_player_index = (current_player_index + 1) % 2  # Toggle between 0 and 1
@@ -259,6 +263,10 @@ class Table():
                 # Both players must have matched the highest bet
                 if players_in_round[0].bet == players_in_round[1].bet:
                     print("Both players have matched the highest bet, betting round complete.")
+                    return highestBet
+                # Prevents an infinite loop where both players are out of money
+                elif players_in_round[0].money == 0 and players_in_round[1].money == 0:
+                    print("Both players are out of money, betting round complete.")
                     return highestBet
 
 
@@ -342,16 +350,28 @@ class Table():
         while True:
             self.startRound()
 
+            # Break out of the game loop if either of the players runs out of money
+            for player in self.allPlayers:
+                if player.money == 0:
+                    print(f"{player.name} is out of chips. Game over!")
+                    done = True
+            if 'done' in locals() and done:
+                break
+
             again = input("Would you like to play again (y/n): ").lower()
 
-            if again == "y" or again == "yes":
+            if again == "n" or again == "no":
+                break
+            elif again == "y" or again == "yes":
                 continue
             else:
-                print("\n\nHere are the overall results: ")
-                for player in self.allPlayers:
-                    print("\t",end="")
-                    # TODO make this print something useful
-                return
+                print("Invalid response. Exiting.")
+                break
+
+        print("\n\nHere are the overall results: ")
+        for player in self.allPlayers:
+            print("\t",end="")
+            # TODO make this print something useful
 
 
 # -------------------------Initialization-------------------------------

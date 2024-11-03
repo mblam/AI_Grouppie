@@ -46,15 +46,12 @@ class gameTest():
             c.draw_card(820, 305, "images/Card_back.png")
             c.draw_card(940, 305, "images/Card_back.png")
             
-            b.gameButton(415, 705, 80, 40, "check").createButton()
-            b.gameButton(615, 705, 80, 40, "call").createButton()
-            b.gameButton(815, 705, 80, 40, "raise").createButton()
-            b.gameButton(1015, 705, 80, 40, "fold").createButton()
-            
+            #displays the buttons
             self.Check.createButton()
             self.Call.createButton()
             self.Raise.createButton()
             self.Fold.createButton()
+            
             
             pygame.display.flip()
         

@@ -58,18 +58,36 @@ def thirdRoundBoard(cards):
            draw_card(940, 305, "images/Playing_Cards/PNG-cards-1.3/" + single_card  + ".png") #Third card table position
         i += 1
 
-#prints the players hands
+#prints the players hands on the screen
 def printPlayerHand(name, cards, money):
+    
+    #gets the current screen and text used
+    screen = pygame.display.get_surface()
     text = pygame.font.SysFont(None, 24)
+    
+    #icon for the chip
+    w_chip = pygame.transform.scale(pygame.image.load("images\chip_folder\white_chip.png"), (50,50))
+    #puts the chip amount on the screen
+    chip_amt = text.render(str(money), True, (255, 255, 255))
     i = 0
     y = 0
     if name == "Player 1":
-        p1_earnings = text.render("Player 1\'s Earnings: " + str(money), True, (255, 255, 255))
-        pygame.display.get_surface().blit(p1_earnings, (25, 720))
+        #displays Player's earning so far (hard coded number for now)
+        p1_earnings = text.render("Player 1\'s Earnings: $10,000" , True, (255, 255, 255))
+        
+        #updates the screen
+        screen.blit(p1_earnings, (25, 720))
+        screen.blit(w_chip, (50, 650))
+        screen.blit(chip_amt, (110, 667))
         y = 550
     else :
-        p1_earnings = text.render("Player 2\'s Earnings: " + money, True, (255, 255, 255))
-        pygame.display.get_surface().blit(p1_earnings, (25, 20))
+        #displays Player's earning so far (hard coded number for now)
+        p2_earnings = text.render("Player 2\'s Earnings: $10,000", True, (255, 255, 255))
+        
+        #updates the screen
+        screen.blit(p2_earnings, (25, 20))
+        screen.blit(w_chip, (50, 50))
+        screen.blit(chip_amt, (110, 67))
         y = 60
     for single_card in cards:
         if i == 0:

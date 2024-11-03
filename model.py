@@ -215,7 +215,7 @@ class Table():
                 continue
 
             print()
-            print(colored(f"{current_player.name}'s turn:"))
+            print(colored(f"{current_player.name}'s turn:", current_player.color))
             # Simply skips the current player if they don't have any money to bet
             if current_player.money == 0:
                 print(f"You have 0 chips and cannot make a play.")
@@ -225,7 +225,7 @@ class Table():
                     print("Cards on the table: ", end="")
                     Card.print_pretty_cards(self.board)
 
-                bet = current_player.betting(highestBet, preFlop)
+                bet = current_player.betting(highestBet, self.board, preFlop)
 
                 if bet == -1:  # Player folds
                     folded_players.add(current_player)

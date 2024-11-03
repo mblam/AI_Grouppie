@@ -49,7 +49,7 @@ class Player():
         self.printHand()
         if len(self.display) == 0:
             self.getCurrCards()
-            cd.printPlayerHand(self.name, self.display)
+            cd.printPlayerHand(self.name, self.display, self.money)
         print(f"\tYou have {self.money} chips.")
         print(f"\tThe highest bet is {highestBet} chips.")
         

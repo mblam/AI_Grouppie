@@ -59,14 +59,17 @@ def thirdRoundBoard(cards):
         i += 1
 
 #prints the players hands
-def printPlayerHand(name, cards):
-    print(name)
-    print(cards)
+def printPlayerHand(name, cards, money):
+    text = pygame.font.SysFont(None, 24)
     i = 0
     y = 0
     if name == "Player 1":
+        p1_earnings = text.render("Player 1\'s Earnings: " + str(money), True, (255, 255, 255))
+        pygame.display.get_surface().blit(p1_earnings, (25, 720))
         y = 550
     else :
+        p1_earnings = text.render("Player 2\'s Earnings: " + money, True, (255, 255, 255))
+        pygame.display.get_surface().blit(p1_earnings, (25, 20))
         y = 60
     for single_card in cards:
         if i == 0:

@@ -12,6 +12,9 @@ STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
 SMALL_BLIND_AMOUNT = 1
 
+black = (0, 0, 0)
+
+gameState = gameTest.gameTest()
 
 # TODO: Add error checking for betting values
     # Needs to at least call
@@ -28,6 +31,7 @@ class Player():
         self.AIPlayer = ai
         self.bet = 0
         self.display = []
+        self.font = pygame.font.SysFont(None, 24)
 
     def getCard(self, card):
         self.hand.append(card)
@@ -68,16 +72,16 @@ class Player():
                     print("\tInvalid choice, please try again.")
             #general betting
             else:
-                action = input("\tWould you like to check [c], call [ca], raise [r], or fold [f]: ")
+                action = gameState.getAction()
                 #if they check (means they want to pass the action to the next player)
-                if action.lower() in ["c", "check"]:
+                if action == "check":
                     if highestBet > 0 and highestBet != self.bet:
                         print("\tYou cannot check, there is already a bet.")
                     else:
                         print(f"\t{self.name} checks.")
                         return 0  # Player checks
                 #if they call (want to match a highest bet made by another player)
-                elif action.lower() in ["ca", "call"]:
+                elif action == "call":
                     amount_to_call = highestBet - self.bet
                     self.money -= amount_to_call
                     print(self.money)
@@ -85,7 +89,7 @@ class Player():
                     print(f"\t{self.name} calls {amount_to_call} chips.")
                     return highestBet  # Player calls
                 #if they raise (raise the bet higher)
-                elif action.lower() in ["r", "raise"]:
+                elif action == "raise":
                     while True:
                         amount = int(input("\tHow much would you like to raise: "))
                         if amount <= highestBet or amount > self.money:
@@ -99,7 +103,7 @@ class Player():
                                 return self.bet
                             return amount  # Player raises
                 # if they fold (they stop playing for the hand)
-                elif action.lower() in ["f", "fold"]:
+                elif action == "fold":
                     print(f"\t{self.name} folds.")
                     return -1  # Player folds
                 else:
@@ -118,6 +122,7 @@ class Table():
         self.bigBlind = None
         self.smallBlind = None
         self.rotator = 0
+        self.font = pygame.font.SysFont(None, 24)
 
     # Initializes player objects and deals cards to them
     def initializePlayers(self, numPlayers):
@@ -291,7 +296,8 @@ class Table():
                     return  # Game ends
 
                 print(str(self.pot)+"!")
-                print("Pre-Flop Betting")
+                text = self.font.render("Pre-Flop Betting", True, black)
+                pygame.display.get_surface().blit(text, (680, 20))
                 highestBet = self.rotate_betting(highestBet, preFlop=True)
                 if highestBet == -1:
                     self.rotator = (self.rotator + 1) % 2
@@ -303,13 +309,16 @@ class Table():
             # Dealing logic for flop, turn, and river
             match i:
                 case 1:
-                    print("Dealing the flop")
+                    text = self.font.render("Dealing the flop", True, black)
+                    pygame.display.get_surface().blit(text, (680, 20))
                     self.dealFirstRound()
                 case 2:
-                    print("Dealing the turn")
+                    text = self.font.render("Dealing the turn", True, black)
+                    pygame.display.get_surface().blit(text, (680, 20))
                     self.dealSecondRound()
                 case 3:
-                    print("Dealing the river")
+                    text = self.font.render("Dealing the river", True, black)
+                    pygame.display.get_surface().blit(text, (680, 20))
                     self.dealThirdRound()
 
             print("***********************\n")
@@ -348,7 +357,7 @@ class Table():
         
         while running:
             
-            gameTest.gameTest()
+            gameState.startDisplay()
             
             self.startRound()
             
@@ -372,8 +381,8 @@ class Table():
     gameTest.pygame.quit()
 
 # -------------------------Initialization-------------------------------
-t = Table()
-t.initializePlayers(2)
 pygame.init()
 pygame.display.set_mode((1500, 750))
+t = Table()
+t.initializePlayers(2)
 t.startGame()

@@ -1,4 +1,5 @@
 import pygame
+import gameTest
 
 #hex colors used
 black = (0, 0, 0)
@@ -41,8 +42,13 @@ class gameButton():
         #displays the acatual button
         pygame.display.get_surface().blit(self.surface, (self.x_pos, self.y_pos))
         
-        #get the location of the mouse
         mouse = pygame.mouse.get_pos()
         
+        if self.rect.collidepoint(mouse):
+           if pygame.mouse.get_pressed()[0] == 1 and self.click == False:
+               self.click = True
+            
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.click = False
         
         

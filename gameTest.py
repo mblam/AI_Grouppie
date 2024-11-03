@@ -5,14 +5,24 @@ import display.cardDisplay as c
 class gameTest():
     
     def __init__(self):
-        self.startDisplay()
-        Check = False
-        Call = False
-        Raise = False
-        Fold = False
+        self.Check = b.gameButton(415, 705, 80, 40, "check")
+        self.Call = b.gameButton(615, 705, 80, 40, "call")
+        self.Raise = b.gameButton(815, 705, 80, 40, "raise")
+        self.Fold = b.gameButton(1015, 705, 80, 40, "fold")
+        
+    def getAction(self):
+        mouse = pygame.mouse.get_pos()
+        if self.Check.click == True:
+            return "check"
+        elif self.Call.click == True:
+            return "call"
+        elif self.Raise.click == True:
+            return "raise"
+        elif self.Fold.click == True:
+            return "raise"
 
     def startDisplay(self):
-        
+    
         screen = pygame.display.get_surface()
         
         if pygame.display.get_init():
@@ -41,4 +51,10 @@ class gameTest():
             b.gameButton(815, 705, 80, 40, "raise").createButton()
             b.gameButton(1015, 705, 80, 40, "fold").createButton()
             
+            self.Check.createButton()
+            self.Call.createButton()
+            self.Raise.createButton()
+            self.Fold.createButton()
+            
             pygame.display.flip()
+        

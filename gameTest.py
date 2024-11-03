@@ -21,7 +21,7 @@ class gameTest():
         elif self.Fold.click == True:
             return "raise"
 
-    def startDisplay(self):
+    def startDisplay(self, pot):
     
         screen = pygame.display.get_surface()
         
@@ -52,6 +52,10 @@ class gameTest():
             self.Raise.createButton()
             self.Fold.createButton()
             
+            #displays the current pot of the round
+            font = pygame.font.SysFont(None, 36)
+            main_pot = font.render("The Pot: $" + str(pot), True, (255, 255, 255))
+            screen.blit(main_pot, (1245, 363))
             
             pygame.display.flip()
         

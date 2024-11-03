@@ -357,7 +357,7 @@ class Table():
         
         while running:
             
-            gameState.startDisplay()
+            gameState.startDisplay(self.pot)
             
             self.startRound()
             

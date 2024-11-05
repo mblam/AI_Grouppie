@@ -7,6 +7,7 @@ import sys
 import gameTest as gameTest
 import pygame
 import display.cardDisplay as cd
+import asyncio
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -72,7 +73,10 @@ class Player():
                     print("\tInvalid choice, please try again.")
             #general betting
             else:
-                action = gameState.getAction()
+                action = ""
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        action = gameState.getAction()
                 #if they check (means they want to pass the action to the next player)
                 if action == "check":
                     if highestBet > 0 and highestBet != self.bet:
@@ -107,6 +111,7 @@ class Player():
                     print(f"\t{self.name} folds.")
                     return -1  # Player folds
                 else:
+                    print(action)
                     print("\tInvalid action, please try again.")
 
 # Object that represents the overall state of the game

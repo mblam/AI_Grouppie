@@ -19,7 +19,7 @@ class gameTest():
         elif self.Raise.click == True:
             return "raise"
         elif self.Fold.click == True:
-            return "raise"
+            return "fold"
 
     def startDisplay(self, pot):
     

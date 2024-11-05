@@ -44,8 +44,9 @@ class Player():
         for singleCard in self.hand:
             self.display.append(Card.int_to_str(singleCard))
 
+    #this is called in rotate betting
+    #returns the amount of money that's being bet
     def betting(self, highestBet, preFlop=False):
-
         print("Hand" + ": ", end="")
         self.printHand()
         if len(self.display) == 0:
@@ -58,6 +59,8 @@ class Player():
         print(f"\tYou have bet {self.bet} chips this round.")
 
         while True:
+            
+            #This is for if they can't afford to bet any more
             if self.money <= highestBet:
                 print("\tYou can either fold or go all-in.")
                 choice = input("\tWould you like to go all-in [a] or fold [f]: ")
@@ -75,8 +78,12 @@ class Player():
             else:
                 action = ""
                 for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         action = gameState.getAction()
+                        print(action)
                 #if they check (means they want to pass the action to the next player)
                 if action == "check":
                     if highestBet > 0 and highestBet != self.bet:
@@ -111,8 +118,8 @@ class Player():
                     print(f"\t{self.name} folds.")
                     return -1  # Player folds
                 else:
-                    print(action)
-                    print("\tInvalid action, please try again.")
+                    text = self.font.render("Invalid action, please try again", True, black)
+                    pygame.display.get_surface().blit(text, (680, 30))
 
 # Object that represents the overall state of the game
 class Table():
@@ -128,6 +135,7 @@ class Table():
         self.smallBlind = None
         self.rotator = 0
         self.font = pygame.font.SysFont(None, 24)
+        self.running = True
 
     # Initializes player objects and deals cards to them
     def initializePlayers(self, numPlayers):
@@ -357,10 +365,7 @@ class Table():
 
     def startGame(self):
         
-        
-        running = True
-        
-        while running:
+        while self.running:
             
             gameState.startDisplay(self.pot)
             
@@ -369,9 +374,9 @@ class Table():
             again = input("Would you like to play again (y/n): ").lower()
             
             # Did the user click the window close button?
-            for event in gameTest.pygame.event.get():
-                if event.type == gameTest.pygame.QUIT:
-                    running = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
 
             if again == "y" or again == "yes":
                 continue
@@ -380,7 +385,7 @@ class Table():
                 for player in self.allPlayers:
                     print("\t",end="")
                     # TODO make this print something useful
-                    running = False
+                    self.running = False
                 
     # Done! Time to quit.
     gameTest.pygame.quit()

@@ -45,10 +45,13 @@ class gameButton():
         mouse = pygame.mouse.get_pos()
         
         if self.rect.collidepoint(mouse):
-           if pygame.mouse.get_pressed()[0] == 1 and self.click == False:
+            print("mouse was detected as clicked from the button")
+            if pygame.mouse.get_pressed()[0] == 1 and self.click == False:
+               print("mouse was pressed and click was changed to True")
                self.click = True
             
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.click = False
+        # if pygame.mouse.get_pressed()[0] == 0:
+        #     print("mouse was changed to back to False")
+        #     self.click = False
         
         

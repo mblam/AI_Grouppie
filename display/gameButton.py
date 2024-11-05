@@ -30,8 +30,8 @@ class gameButton():
         #gets the coordinates for the text
         button_text = text.get_rect(center=(self.surface.get_width()/2, self.surface.get_height()/2))
         
-        if self.rect.collidepoint(mouse):
-            pygame.draw.rect(self.surface, gray, self.rect)
+        # if self.rect.collidepoint(mouse):
+        #     pygame.draw.rect(self.surface, gray, self.rect)
         
         #creates the button
         pygame.draw.rect(self.surface, black, self.rect)
@@ -46,7 +46,7 @@ class gameButton():
         
         if self.rect.collidepoint(mouse):
             print("mouse was detected as clicked from the button")
-            if pygame.mouse.get_pressed()[0] == 1 and self.click == False:
+            if pygame.mouse.get_pressed()[0] and self.click == False:
                print("mouse was pressed and click was changed to True")
                self.click = True
             

@@ -11,15 +11,6 @@ class gameTest():
         self.Fold = b.gameButton(1015, 705, 80, 40, "fold")
         
     def getAction(self):
-        print("gets to getAction")
-        print("Checks current state:")
-        print(self.Check.click)
-        print("Call current state:")
-        print(self.Call.click)
-        print("Raise current state:")
-        print(self.Raise.click)
-        print("Fold current state:")
-        print(self.Fold.click)
         if self.Check.click == True:
             return "check"
         elif self.Call.click == True:

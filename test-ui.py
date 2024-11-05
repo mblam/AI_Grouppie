@@ -82,8 +82,14 @@ class Player():
                         pygame.quit()
                         sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        action = gameState.getAction()
-                        print(action)
+                        if gameState.Check.rect.collidepoint(event.pos):
+                            action = "check"
+                        elif gameState.Call.rect.collidepoint(event.pos):
+                            action = "call"
+                        elif gameState.Raise.rect.collidepoint(event.pos):
+                            action = "raise"
+                        elif gameState.Fold.rect.collidepoint(event.pos):
+                            action = "fold"
                 #if they check (means they want to pass the action to the next player)
                 if action == "check":
                     if highestBet > 0 and highestBet != self.bet:

@@ -2,8 +2,10 @@ import treys
 from treys import Card
 from treys import Evaluator
 from treys import Deck
+import pkgutil
 import Chip
 import sys
+from aiLogic import aiBetting
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -14,16 +16,26 @@ SMALL_BLIND_AMOUNT = 1
     # Needs to at least call
 # TODO: Maybe include option for custom player names
 # TODO: Figure out GUI stuff (pygame)
-# TODO: Include logic for AI player
+
+# If termcolor is installed, use that when printing the text for the player's turn
+# If it isn't installed, just print normally
+if pkgutil.find_loader('termcolor') is not None:
+    from termcolor import colored
+else:
+    def colored(string, color):
+        return string
 
 
-class Player():
-    def __init__(self, name, ai=False):
+class Player:
+    def __init__(self, name, ai=False, color=None):
         self.hand = []
         self.name = name
         self.money = STARTING_AMOUNT
+        self.money_at_round_start = self.money
         self.AIPlayer = ai
         self.bet = 0
+        self.color = color
+        if ai: self.name += " (AI)"
 
     def getCard(self, card):
         self.hand.append(card)
@@ -31,7 +43,18 @@ class Player():
     def printHand(self):
         Card.print_pretty_cards(self.hand)
 
-    def betting(self, highestBet, preFlop=False):
+    def betting(self, highestBet, board, preFlop=False):
+        # Handle the logic if the player is being controlled by the AI
+        if self.AIPlayer:
+            # AI logic
+            amount = aiBetting(self, highestBet, preFlop, board)
+
+            if amount == -1:  # Short circuit if folding
+                return amount
+            else:  # Modify class members appropriately
+                self.bet += amount
+                self.money -= amount
+                return self.bet
 
         print("Hand" + ": ", end="")
         self.printHand()
@@ -104,13 +127,16 @@ class Table():
         self.rotator = 0
 
     # Initializes player objects and deals cards to them
-    def initializePlayers(self, numPlayers):
+    def initializePlayers(self, numPlayers, numAI):
         if numPlayers <= 0:
             sys.tracebacklimit = 0
             raise Exception("Invalid number of players")
 
         for i in range(numPlayers):
-            self.allPlayers.append(Player("Player " + str(i + 1)))
+            if i < numAI:
+                self.allPlayers.append(Player("Player "+str(i + 1), True, color="blue"))
+            else:
+                self.allPlayers.append(Player("Player " + str(i + 1), False, color="red"))
         self.dealCardsToPlayers()
 
     # Deal cards to all players one at a time
@@ -188,7 +214,8 @@ class Table():
                 current_player_index = (current_player_index + 1) % 2  # Only two players
                 continue
 
-            print(f"{current_player.name}'s turn:")
+            print()
+            print(colored(f"{current_player.name}'s turn:", current_player.color))
             # Simply skips the current player if they don't have any money to bet
             if current_player.money == 0:
                 print(f"You have 0 chips and cannot make a play.")
@@ -198,7 +225,7 @@ class Table():
                     print("Cards on the table: ", end="")
                     Card.print_pretty_cards(self.board)
 
-                bet = current_player.betting(highestBet, preFlop)
+                bet = current_player.betting(highestBet, self.board, preFlop)
 
                 if bet == -1:  # Player folds
                     folded_players.add(current_player)
@@ -253,6 +280,7 @@ class Table():
         # Error catching
         for player in self.activePlayers:
             player.bet = 0
+            player.money_at_round_start = player.money
 
         for i in range(4):
             print()
@@ -345,7 +373,8 @@ class Table():
             print("\t",end="")
             # TODO make this print something useful
 
+
 # -------------------------Initialization-------------------------------
 t = Table()
-t.initializePlayers(2)
+t.initializePlayers(2, 0)
 t.startGame()

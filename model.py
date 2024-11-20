@@ -376,5 +376,5 @@ class Table():
 
 # -------------------------Initialization-------------------------------
 t = Table()
-t.initializePlayers(2, 1)
+t.initializePlayers(2, 0)
 t.startGame()

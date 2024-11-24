@@ -6,6 +6,7 @@ import pkgutil
 import Chip
 import sys
 from aiLogic import aiBetting
+from aiLogic import debug
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
@@ -166,7 +167,7 @@ class Table():
     def winner(self, player):
         player.money += self.pot
         print(player.name + " wins $" + str(self.pot))
-        print(player.money)
+        debug(player.money)
 
     def blindBetting(self, smallBlind, bigBlind):
         highestBet = 0
@@ -295,7 +296,7 @@ class Table():
                     self.rotator = (self.rotator + 1) % 2
                     return  # Game ends
 
-                print(str(self.pot)+"!")
+                debug(str(self.pot)+"!")
                 print("Pre-Flop Betting")
                 highestBet = self.rotate_betting(highestBet, preFlop=True)
                 if highestBet == -1:
@@ -328,7 +329,7 @@ class Table():
                     self.rotator = (self.rotator + 1) % 2
                     return
                 self.pot += highestBet* 2
-                print(self.pot)
+                debug(self.pot)
 
 
             # Evaluate hands and declare the winner after river round

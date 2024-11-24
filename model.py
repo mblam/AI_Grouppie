@@ -13,10 +13,7 @@ BIG_BLIND_AMOUNT = 2
 SMALL_BLIND_AMOUNT = 1
 
 
-# TODO: Add error checking for betting values
-    # Needs to at least call
 # TODO: Maybe include option for custom player names
-# TODO: Figure out GUI stuff (pygame)
 
 # If termcolor is installed, use that when printing the text for the player's turn
 # If it isn't installed, just print normally
@@ -36,6 +33,7 @@ class Player:
         self.AIPlayer = ai
         self.bet = 0
         self.color = color
+        self.prev_bet = self.bet
         if ai: self.name += " (AI)"
 
     def getCard(self, card):
@@ -45,6 +43,7 @@ class Player:
         Card.print_pretty_cards(self.hand)
 
     def betting(self, highestBet, board, preFlop=False):
+        self.prev_bet = self.bet
         # Handle the logic if the player is being controlled by the AI
         if self.AIPlayer:
             # AI logic
@@ -66,7 +65,7 @@ class Player:
         print(f"\tYou have bet {self.bet} chips this round.")
 
         while True:
-            if self.money <= highestBet:
+            if self.money <= highestBet - self.bet:
                 print("\tYou can either fold or go all-in.")
                 choice = input("\tWould you like to go all-in [a] or fold [f]: ")
                 if choice.lower() in ["a", "all-in"]:
@@ -86,27 +85,26 @@ class Player:
                         print("\tYou cannot check, there is already a bet.")
                     else:
                         print(f"\t{self.name} checks.")
-                        return 0  # Player checks
+                        return 0  # Player checks, returns how much the player increased the bet
                 elif action.lower() in ["ca", "call"]:
                     amount_to_call = highestBet - self.bet
                     self.money -= amount_to_call
-                    print(self.money)
+                    debug(self.money)
                     self.bet = highestBet  # Update current bet to match the highest
                     print(f"\t{self.name} calls {amount_to_call} chips.")
-                    return highestBet  # Player calls
+                    return amount_to_call  # Player calls, returns the difference the player added
                 elif action.lower() in ["r", "raise"]:
                     while True:
                         amount = int(input("\tHow much would you like to raise: "))
-                        if amount <= highestBet or amount > self.money:
-                            print("\tYou must raise more than the current highest bet and not exceed your total chips.")
+                        if amount + self.bet <= highestBet or amount > self.money:
+                            print("\tYou must raise up to more than the current highest bet and not exceed your total chips.")
                         else:
                             self.money -= amount
                             self.bet += amount  # Update the current bet with the raise amount
-                            highestBet = self.bet  # Update highestBet
                             print(f"\t{self.name} raises to {self.bet} chips.")
                             if preFlop:    # handles the money they already put up on the preflop
-                                return self.bet
-                            return amount  # Player raises
+                                return amount
+                            return amount  # Player raises, returns the difference the player added
                 elif action.lower() in ["f", "fold"]:
                     print(f"\t{self.name} folds.")
                     return -1  # Player folds
@@ -207,7 +205,7 @@ class Table():
         current_player_index = self.rotator
 
         while True:
-            print(self.pot)
+            print("Pot:",self.pot)
             current_player = players_in_round[current_player_index]
 
             # Skip player if they folded
@@ -226,7 +224,7 @@ class Table():
                     print("Cards on the table: ", end="")
                     Card.print_pretty_cards(self.board)
 
-                bet = current_player.betting(highestBet, self.board, preFlop)
+                bet = current_player.betting(highestBet, self.board, preFlop) # If increasing the bet, this represents the difference to the pot
 
                 if bet == -1:  # Player folds
                     folded_players.add(current_player)
@@ -234,27 +232,23 @@ class Table():
                     # The other player wins
                     remaining_player = players_in_round[1 - current_player_index]
                     print(f"{remaining_player.name} wins, {current_player.name} folded.")
-                    if not preFlop and not highestBet == 2:
-                        self.pot += highestBet
                     self.winner(remaining_player)
                     return -1
-                elif bet > highestBet:  # Player raises
+                elif bet + current_player.prev_bet > highestBet:  # Player raises
                     # Update the pot with the amount of the raise
-                    self.pot += bet - current_player.bet  # Add the difference between new bet and previous bet
-                    highestBet = bet  # Update the highest bet to the new raise
-                    print(f"{current_player.name} raises to {bet} chips.")
-                elif bet == 2 and preFlop and current_player == self.smallBlind:  # Edge case where pot doesnt increase when calling big blind
-                    self.pot += 1
+                    self.pot += bet  # Add the difference between new bet and previous bet
+                    highestBet = bet + current_player.prev_bet  # Update the highest bet to the new raise
+                    print(f"{current_player.name} raises to {highestBet} chips.")
                 else:  # Player calls or checks
-                    if bet < highestBet:  # They are calling the difference
-                        call_amount = highestBet - current_player.bet
+                    if bet != 0:  # They are calling the difference
+                        call_amount = bet
                         self.pot += call_amount  # Accumulate the pot with the call amount
                         print(f"{current_player.name} calls {call_amount} chips.")
                     else:
                         print(f"{current_player.name} checks.")
 
-                # Ensure the player's bet is updated correctly
-                current_player.bet = highestBet  # Match the highest bet
+                # Ensure the player's bet is updated correctly, already updated by calling betting
+                # current_player.bet = highestBet  # Match the highest bet
 
             # Move to the next player
             current_player_index = (current_player_index + 1) % 2  # Toggle between 0 and 1
@@ -323,12 +317,13 @@ class Table():
             # Normal post-flop betting (post-flop, turn, river)
             if i != 0:
                 print(f"Post-flop betting round {i}")
-                highestBet = 0  # Reset highest bet for each new round
+                highestBet = 0  # Reset the highest bet for each new round
                 highestBet = self.rotate_betting(highestBet)
+                for player in self.activePlayers:
+                    player.bet = 0 # Reset the current bet for each player
                 if highestBet == -1:
                     self.rotator = (self.rotator + 1) % 2
                     return
-                self.pot += highestBet* 2
                 debug(self.pot)
 
 

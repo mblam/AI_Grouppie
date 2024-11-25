@@ -57,8 +57,13 @@ class State:
 
         return probability
 
-    def bet_up_to_probability(self):
-        probability = self.probablility_of_winning(self.hand, self.board)
+    '''Takes the amount of money that the player had at the start of this round, and  multiplies that by the 
+    probability of the current hand winning. The AI will then bet a random number between the minimum amount to play 
+    the round, and that previously calculated value. This will result in the AI betting less if it has a bad hand, 
+    and betting more if it has a good hand. '''
+    def bet_up_to_probability(self, probability = None):
+        if probability is None:
+            probability = self.probablility_of_winning(self.hand, self.board)
         max_willing = int(self.startingMoney * probability) - self.currentBet
         if max_willing <= self.min_to_play:
             return -1
@@ -68,22 +73,37 @@ class State:
     def evaluate_GTO_bet(self):
         probability = self.probablility_of_winning(self.hand, self.board)
 
-        if probability >= .75:      # Strong hand
-            pass
+        if probability >= .67:      # Strong hand
             # Always bet
-        elif probability <= .25:    # Weak hand
-            pass
-            # Usually just check
-                # Up until what point though???
-            # Occassionally bet
-                # this will be based on whether or not our cards block a good hand for the opponent
-                # also based on the possibility for the hand to get better as more cards are flipped
-                    # Create fresh deck, loop through all possible draws (recursive) and get expectimax from those values
-        else:                       # Medium hand
-            pass
-            # Probably 50:50, same reasoning as for weak, just tweak the threshold for each of the decisions
+            return self.bet_up_to_probability()
+        else:
+            potential_probability = self.expected_final_hand(None)
+            percent_increase = (potential_probability - probability) / probability
+            if probability <= .33:    # Weak hand
+                # If it has good potential, bet anyway
+                if percent_increase >= .5: # TODO: Figure out a reasoning for this value
+                    return self.bet_up_to_probability(potential_probability)
+                # Fold
+                else:
+                    return -1
+            else:                       # Medium hand
+                # If it has good potential, bet anyway
+                if percent_increase >= .33: # TODO: Figure out a reasoning for this value
+                    return self.bet_up_to_probability(potential_probability)
+                # Fold
+                else:
+                    return -1
 
+    '''Uses an expectimax tree to determine what the probability of winning is going to be once all cards are put on 
+    the board. Takes the hand and the current state of the board, then goes through every permutation of cards that 
+    could be drawn. It takes the probability of those cards being drawn multiplied by the probability of winning with 
+    that drawing, using total probability to calculate the overall chances of winning with the current hand. This 
+    will help determine how much potential a hand has, because if a given board state has nothing good, but it's only 
+    one card away from a really good hand, then this will reflect that and produce a higher score than for a bad hand 
+    with no potential to get better. '''
     def expected_final_hand(self, potentialBoard):
+        debug("Current Hand: "+str(self.hand))
+        debug("Potential Board: "+str(potentialBoard))
         if potentialBoard is None:
             potentialBoard = self.board
 
@@ -135,7 +155,7 @@ def aiBetting(player, highestBet: int, preFlop: bool, board) -> int:
         return min_to_play
 
     initial_state = State(player, highestBet, preFlop, board, min_to_play)
-    amount = randomToLimit(initial_state) # THIS IS THE ONLY PART OF THE FUNCTION THAT SHOULD BE ALTERED
+    amount = GTO(initial_state) # THIS IS THE ONLY PART OF THE FUNCTION THAT SHOULD BE ALTERED
 
     if amount > max_to_play:    # bound to upper limit
         return max_to_play
@@ -159,6 +179,7 @@ def alwaysCall(initial_state: State) -> int:
 def randomToLimit(initial_state: State) -> int:
     return initial_state.bet_up_to_probability()
 
+# Option 4: Use Game Theory Optimal to determine the best move in the current situation
 def GTO(initial_state: State) -> int:
-    pass
+    return initial_state.evaluate_GTO_bet()
 

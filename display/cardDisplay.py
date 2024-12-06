@@ -73,19 +73,19 @@ def printPlayerHand(name, cards, money):
     y = 0
     if name == "Player 1":
         #displays Player's earning so far (hard coded number for now)
-        p1_earnings = text.render("Player 1\'s Earnings: $10,000" , True, (255, 255, 255))
+        #p1_earnings = text.render("Player 1\'s Earnings: $10,000" , True, (255, 255, 255))
         
         #updates the screen
-        screen.blit(p1_earnings, (25, 720))
+        #screen.blit(p1_earnings, (25, 720))
         screen.blit(w_chip, (50, 650))
         screen.blit(chip_amt, (110, 667))
         y = 550
     else :
         #displays Player's earning so far (hard coded number for now)
-        p2_earnings = text.render("Player 2\'s Earnings: $10,000", True, (255, 255, 255))
+        #p2_earnings = text.render("Player 2\'s Earnings: $10,000", True, (255, 255, 255))
         
         #updates the screen
-        screen.blit(p2_earnings, (25, 20))
+        #screen.blit(p2_earnings, (25, 20))
         screen.blit(w_chip, (50, 50))
         screen.blit(chip_amt, (110, 67))
         y = 60

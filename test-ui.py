@@ -14,6 +14,8 @@ BIG_BLIND_AMOUNT = 2
 SMALL_BLIND_AMOUNT = 1
 
 black = (0, 0, 0)
+brown = (111, 78, 55)
+green = (53, 101, 73)
 
 gameState = gameTest.gameTest()
 
@@ -92,18 +94,29 @@ class Player():
                             action = "fold"
                 #if they check (means they want to pass the action to the next player)
                 if action == "check":
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
                     if highestBet > 0 and highestBet != self.bet:
-                        print("\tYou cannot check, there is already a bet.")
+                        text = self.font.render("\tYou cannot check, there is already a bet.", True, black)
+                        pygame.display.get_surface().blit(text, (680, 30))
                     else:
-                        print(f"\t{self.name} checks.")
+                        text = self.font.render(f"{self.name} checks.", True, black)
+                        pygame.display.get_surface().blit(text, (680, 30))
                         return 0  # Player checks
                 #if they call (want to match a highest bet made by another player)
                 elif action == "call":
                     amount_to_call = highestBet - self.bet
                     self.money -= amount_to_call
-                    print(self.money)
                     self.bet = highestBet  # Update current bet to match the highest
-                    print(f"\t{self.name} calls {amount_to_call} chips.")
+                    chip_text = self.font.render(f"{self.name} calls {amount_to_call} chips.", True, black)
+                    if self.name == "Player 1":
+                        text = self.font.render("Player 1\'s Earnings: " + f"{self.money}", True, black)
+                        pygame.display.get_surface().blit(text, (25, 720))
+                    else:
+                        text = self.font.render("Player 2\'s Earnings: " + f"{self.money}", True, black)
+                        pygame.display.get_surface().blit(text, (25, 20))
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
+                    pygame.display.get_surface().blit(chip_text, (680, 30))
+                    pygame.display.update()
                     return highestBet  # Player calls
                 #if they raise (raise the bet higher)
                 elif action == "raise":
@@ -115,17 +128,19 @@ class Player():
                             self.money -= amount
                             self.bet += amount  # Update the current bet with the raise amount
                             highestBet = self.bet  # Update highestBet
-                            print(f"\t{self.name} raises to {self.bet} chips.")
+                            print(f"{self.name} raises to {self.bet} chips.")
                             if preFlop:    # handles the money they already put up on the preflop
                                 return self.bet
                             return amount  # Player raises
                 # if they fold (they stop playing for the hand)
                 elif action == "fold":
-                    print(f"\t{self.name} folds.")
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
+                    text = self.font.render(f"{self.name} folds.", True, black)
+                    pygame.display.get_surface().update(text, (680, 30))
                     return -1  # Player folds
                 else:
                     text = self.font.render("Invalid action, please try again", True, black)
-                    pygame.display.get_surface().blit(text, (680, 30))
+                    pygame.display.get_surface().blit(text, (1150, 50))
 
 # Object that represents the overall state of the game
 class Table():
@@ -316,7 +331,8 @@ class Table():
 
                 print(str(self.pot)+"!")
                 text = self.font.render("Pre-Flop Betting", True, black)
-                pygame.display.get_surface().blit(text, (680, 20))
+                pygame.display.get_surface().blit(text, (680, 13))
+                pygame.display.update()
                 highestBet = self.rotate_betting(highestBet, preFlop=True)
                 if highestBet == -1:
                     self.rotator = (self.rotator + 1) % 2
@@ -328,16 +344,21 @@ class Table():
             # Dealing logic for flop, turn, and river
             match i:
                 case 1:
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 13, 130, 20))
                     text = self.font.render("Dealing the flop", True, black)
-                    pygame.display.get_surface().blit(text, (680, 20))
+                    pygame.display.get_surface().blit(text, (680, 15))
                     self.dealFirstRound()
                 case 2:
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 13, 130, 20))
                     text = self.font.render("Dealing the turn", True, black)
-                    pygame.display.get_surface().blit(text, (680, 20))
+                    pygame.display.get_surface().blit(text, (680, 15))
+                    pygame.display.update()
                     self.dealSecondRound()
                 case 3:
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 13, 130, 20))
                     text = self.font.render("Dealing the river", True, black)
-                    pygame.display.get_surface().blit(text, (680, 20))
+                    pygame.display.get_surface().blit(text, (680, 15))
+                    pygame.display.update()
                     self.dealThirdRound()
 
             print("***********************\n")

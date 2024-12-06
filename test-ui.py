@@ -331,7 +331,7 @@ class Table():
 
                 print(str(self.pot)+"!")
                 text = self.font.render("Pre-Flop Betting", True, black)
-                pygame.display.get_surface().blit(text, (680, 13))
+                pygame.display.get_surface().blit(text, (680, 10))
                 pygame.display.update()
                 highestBet = self.rotate_betting(highestBet, preFlop=True)
                 if highestBet == -1:
@@ -344,20 +344,20 @@ class Table():
             # Dealing logic for flop, turn, and river
             match i:
                 case 1:
-                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 13, 130, 20))
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 10, 130, 20))
                     text = self.font.render("Dealing the flop", True, black)
-                    pygame.display.get_surface().blit(text, (680, 15))
+                    pygame.display.get_surface().blit(text, (680, 10))
                     self.dealFirstRound()
                 case 2:
-                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 13, 130, 20))
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 10, 130, 20))
                     text = self.font.render("Dealing the turn", True, black)
-                    pygame.display.get_surface().blit(text, (680, 15))
+                    pygame.display.get_surface().blit(text, (680, 10))
                     pygame.display.update()
                     self.dealSecondRound()
                 case 3:
-                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 13, 130, 20))
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 10, 130, 20))
                     text = self.font.render("Dealing the river", True, black)
-                    pygame.display.get_surface().blit(text, (680, 15))
+                    pygame.display.get_surface().blit(text, (680, 10))
                     pygame.display.update()
                     self.dealThirdRound()
 

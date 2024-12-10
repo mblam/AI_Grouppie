@@ -2,31 +2,8 @@ from treys import Card
 from treys import Evaluator
 from treys import Deck
 import random
-import pkgutil
+import printingDefs as printer
 
-DEBUG = False
-
-# Adds debug statements that are toggleable through the DEBUG variable
-# If termcolor is installed, these statements will be colored for easy visability
-# If termcolor isn't installed, they will be printed normally, just with "Debug: " in front
-if DEBUG:
-    if pkgutil.find_loader('termcolor') is not None:
-        from termcolor import colored
-    else:
-        def colored(string, color): return string
-    def debug(text, color="magenta"): print(colored("Debug: "+str(text), color))
-else:
-    def debug(text, color=None): pass
-
-"""
-Player members for reference
-    self.hand = []
-    self.name = name
-    self.money = STARTING_AMOUNT
-    self.AIPlayer = ai
-    self.bet = 0
-    self.color = color
-"""
 
 from enum import Enum
 class HandStrength(Enum):
@@ -57,10 +34,12 @@ class State:
 
         return probability
 
-    '''Takes the amount of money that the player had at the start of this round, and  multiplies that by the 
+    '''
+    Takes the amount of money that the player had at the start of this round, and  multiplies that by the 
     probability of the current hand winning. The AI will then bet a random number between the minimum amount to play 
     the round, and that previously calculated value. This will result in the AI betting less if it has a bad hand, 
-    and betting more if it has a good hand. '''
+    and betting more if it has a good hand.
+    '''
     def bet_up_to_probability(self, probability = None):
         if probability is None:
             probability = self.probablility_of_winning(self.hand, self.board)
@@ -94,16 +73,18 @@ class State:
                 else:
                     return -1
 
-    '''Uses an expectimax tree to determine what the probability of winning is going to be once all cards are put on 
+    '''
+    Uses an expectimax tree to determine what the probability of winning is going to be once all cards are put on 
     the board. Takes the hand and the current state of the board, then goes through every permutation of cards that 
     could be drawn. It takes the probability of those cards being drawn multiplied by the probability of winning with 
     that drawing, using total probability to calculate the overall chances of winning with the current hand. This 
     will help determine how much potential a hand has, because if a given board state has nothing good, but it's only 
     one card away from a really good hand, then this will reflect that and produce a higher score than for a bad hand 
-    with no potential to get better. '''
+    with no potential to get better.
+    '''
     def expected_final_hand(self, potentialBoard):
-        debug("Current Hand: "+str(self.hand))
-        debug("Potential Board: "+str(potentialBoard))
+        printer.debug("Current Hand: "+str(self.hand))
+        printer.debug("Potential Board: "+str(potentialBoard))
         if potentialBoard is None:
             potentialBoard = self.board
 
@@ -128,25 +109,13 @@ class State:
         return total
 
 
-
-
-# NOTE: probably going to try and implement an expectimax tree to determine what action should be taken
-# TODO: create a state object
-# TODO: create evaluation function
-    # TODO: cost should be (probability of winning * amount going to bet) - (probability of losing * amount already bet)
-        # Probably going to update this formula as we go along
-    # After this is implemented, maybe also account for the potential of that hand to get better
-        # i.e. a hand that's one card away from a flush is better than completely random
-# TODO: Actually traverse the tree and pick the best path
-
-
 # Function being called within the actual game
 # Only handles the valid value checking
 # Actual logic to decide what should be done will be implemented in another function
 def aiBetting(player, highestBet: int, preFlop: bool, board) -> int:
-    debug(f"Highest: {highestBet}")
-    debug(f"Bet: {player.bet}")
-    debug(f"Money: {player.money}")
+    printer.debug(f"Highest: {highestBet}")
+    printer.debug(f"Bet: {player.bet}")
+    printer.debug(f"Money: {player.money}")
     max_to_play = player.money
     min_to_play = highestBet - player.bet
 

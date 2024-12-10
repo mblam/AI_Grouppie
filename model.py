@@ -2,27 +2,14 @@ import treys
 from treys import Card
 from treys import Evaluator
 from treys import Deck
-import pkgutil
 import Chip
 import sys
 from aiLogic import aiBetting
-from aiLogic import debug
+import printingDefs as printer
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
 SMALL_BLIND_AMOUNT = 1
-
-
-# TODO: Maybe include option for custom player names
-
-# If termcolor is installed, use that when printing the text for the player's turn
-# If it isn't installed, just print normally
-if pkgutil.find_loader('termcolor') is not None:
-    from termcolor import colored
-else:
-    def colored(string, color):
-        return string
-
 
 class Player:
     def __init__(self, name, ai=False, color=None):
@@ -89,7 +76,7 @@ class Player:
                 elif action.lower() in ["ca", "call"]:
                     amount_to_call = highestBet - self.bet
                     self.money -= amount_to_call
-                    debug(self.money)
+                    printer.debug(self.money)
                     self.bet = highestBet  # Update current bet to match the highest
                     print(f"\t{self.name} calls {amount_to_call} chips.")
                     return amount_to_call  # Player calls, returns the difference the player added
@@ -165,7 +152,7 @@ class Table():
     def winner(self, player):
         player.money += self.pot
         print(player.name + " wins $" + str(self.pot))
-        debug(player.money)
+        printer.debug(player.money)
 
     def blindBetting(self, smallBlind, bigBlind):
         highestBet = 0
@@ -214,7 +201,7 @@ class Table():
                 continue
 
             print()
-            print(colored(f"{current_player.name}'s turn:", current_player.color))
+            print(printer.colored(f"{current_player.name}'s turn:", current_player.color))
             # Simply skips the current player if they don't have any money to bet
             if current_player.money == 0:
                 print(f"You have 0 chips and cannot make a play.")
@@ -290,7 +277,7 @@ class Table():
                     self.rotator = (self.rotator + 1) % 2
                     return  # Game ends
 
-                debug(str(self.pot)+"!")
+                printer.debug(str(self.pot)+"!")
                 print("Pre-Flop Betting")
                 highestBet = self.rotate_betting(highestBet, preFlop=True)
                 if highestBet == -1:
@@ -324,7 +311,7 @@ class Table():
                 if highestBet == -1:
                     self.rotator = (self.rotator + 1) % 2
                     return
-                debug(self.pot)
+                printer.debug(self.pot)
 
 
             # Evaluate hands and declare the winner after river round

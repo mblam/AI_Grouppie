@@ -52,22 +52,22 @@ class State:
     def evaluate_GTO_bet(self):
         probability = self.probablility_of_winning(self.hand, self.board)
 
-        if probability >= .67:      # Strong hand
+        if probability >= .65:      # Strong hand           # TODO: Figure out strong threshold
             # Always bet
             return self.bet_up_to_probability()
         else:
             potential_probability = self.expected_final_hand(None)
             percent_increase = (potential_probability - probability) / probability
-            if probability <= .33:    # Weak hand
+            if probability <= .33:    # Weak hand           # TODO: Figure out weak threshold
                 # If it has good potential, bet anyway
-                if percent_increase >= .5: # TODO: Figure out a reasoning for this value
+                if percent_increase >= .1:                 # TODO: Figure out medium percent increase
                     return self.bet_up_to_probability(potential_probability)
                 # Fold
                 else:
                     return -1
             else:                       # Medium hand
                 # If it has good potential, bet anyway
-                if percent_increase >= .33: # TODO: Figure out a reasoning for this value
+                if percent_increase >= .05:                 # TODO: Figure out weak percent increase
                     return self.bet_up_to_probability(potential_probability)
                 # Fold
                 else:
@@ -151,4 +151,3 @@ def randomToLimit(initial_state: State) -> int:
 # Option 4: Use Game Theory Optimal to determine the best move in the current situation
 def GTO(initial_state: State) -> int:
     return initial_state.evaluate_GTO_bet()
-

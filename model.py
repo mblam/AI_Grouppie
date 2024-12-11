@@ -358,6 +358,7 @@ class Table():
 
 
 # -------------------------Initialization-------------------------------
-t = Table()
-t.initializePlayers(2, 0)
-t.startGame()
+if __name__ == "__main__":
+    t = Table()
+    t.initializePlayers(2, 0)
+    t.startGame()

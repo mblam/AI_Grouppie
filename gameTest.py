@@ -1,31 +1,3 @@
-# Simple pygame program
-
-CARD_WIDTH = 100
-
-def draw_card(x,y,text,image_name,width=CARD_WIDTH,height=CARD_WIDTH*1.4):
-    pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(x,y,width,height),border_radius=7)
-
-
-    pygame.font.init()  # you have to call this at the start,
-    # if you want to use this module.
-    card_font = pygame.font.SysFont('Arial Bold', int(width*.6))
-    card_val = card_font.render(text,False,(0,0,0))
-
-    screen.blit(card_val, (x + width/2 - int(width*.3),y + height/2-card_val.get_height()/2))
-
-    image = pygame.image.load(image_name)  # Load in image
-    image = pygame.transform.scale(image,
-                               (card_val.get_height() * image.get_width() / image.get_height(), card_val.get_height()))  # Scale it to whatever dimenstions you want
-    screen.blit(image, (x + width/2, y + height/2 - image.get_height()/2))  # Print to the screen
-
-def draw_card_upside_down(x,y,width=CARD_WIDTH,height=CARD_WIDTH*1.4):
-    image = pygame.image.load("images/Card_back.png")
-    image = pygame.transform.scale(image,
-                                   (width,
-                                    height))  # Scale it to whatever dimenstions you want
-    screen.blit(image, (x, y))  # Print to the screen
-
-# Import and initialize the pygame library
 import pygame
 
 pygame.init()
@@ -63,19 +35,7 @@ while running:
     draw_card_upside_down(760, 60) #AI second card position
     draw_card(640, 550, "K", "images/Card_heart.png") #Player first card position
     draw_card(760, 550, "A", "images/Card_club.png") #Player second card position
-    
-    # First Round 
-    # draw_card(580, 305, "Q", "images/Card_spade.png") #First card table position
-    # draw_card(700, 305, "8", "images/Card_spade.png") #Second card table position
-    # draw_card(820, 305, "5", "images/Card_spade.png") #Third card table position
-    
-    # Second Round
-    # draw_card(460, 305, "Q", "images/Card_spade.png") #First card table position
-    # draw_card(580, 305, "8", "images/Card_spade.png") #Second card table position
-    # draw_card(700, 305, "5", "images/Card_spade.png") #Third card table position
-    # draw_card_upside_down(820, 305) #Fourth card table position
-    
-    # Full Position
+
     draw_card(460, 305, "Q", "images/Card_spade.png") #First card table position
     draw_card(580, 305, "8", "images/Card_spade.png") #Second card table position
     draw_card(700, 305, "5", "images/Card_spade.png") #Third card table position

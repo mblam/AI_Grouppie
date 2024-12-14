@@ -256,8 +256,11 @@ class Table():
                 current_player_index = (current_player_index + 1) % 2  # Only two players
                 continue
 
-
-            print(f"{current_player.name}'s turn:")
+            
+            pygame.draw.rect(pygame.display.get_surface(), brown, (1200, 30, 200, 15))
+            text = self.font.render(f"{current_player.name}'s turn", True, black)
+            pygame.display.get_surface().blit(text, (1200, 30))
+            
 
             if not preFlop:  # Print board if cards are on board
                 print("Cards on the table: ", end="")

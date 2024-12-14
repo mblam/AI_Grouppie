@@ -96,6 +96,7 @@ class Player():
                 if action == "check":
                     pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
                     if highestBet > 0 and highestBet != self.bet:
+                        pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
                         text = self.font.render("\tYou cannot check, there is already a bet.", True, black)
                         pygame.display.get_surface().blit(text, (680, 30))
                     else:
@@ -109,9 +110,11 @@ class Player():
                     self.bet = highestBet  # Update current bet to match the highest
                     chip_text = self.font.render(f"{self.name} calls {amount_to_call} chips.", True, black)
                     if self.name == "Player 1":
+                        pygame.draw.rect(pygame.display.get_surface(), brown, (25, 720, 200, 15))
                         text = self.font.render("Player 1\'s Earnings: " + f"{self.money}", True, black)
                         pygame.display.get_surface().blit(text, (25, 720))
                     else:
+                        pygame.draw.rect(pygame.display.get_surface(), brown, (25, 20, 200, 15))
                         text = self.font.render("Player 2\'s Earnings: " + f"{self.money}", True, black)
                         pygame.display.get_surface().blit(text, (25, 20))
                     pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
@@ -120,6 +123,7 @@ class Player():
                     return highestBet  # Player calls
                 #if they raise (raise the bet higher)
                 elif action == "raise":
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 200, 15))
                     while True:
                         amount = int(input("\tHow much would you like to raise: "))
                         if amount <= highestBet or amount > self.money:
@@ -128,9 +132,18 @@ class Player():
                             self.money -= amount
                             self.bet += amount  # Update the current bet with the raise amount
                             highestBet = self.bet  # Update highestBet
-                            print(f"{self.name} raises to {self.bet} chips.")
+                            text = self.font.render(f"{self.name} raises to {self.bet} chips.", True, black)
+                            pygame.display.get_surface().blit(text, (680, 30))
                             if preFlop:    # handles the money they already put up on the preflop
                                 return self.bet
+                            if self.name == "Player 1":
+                                pygame.draw.rect(pygame.display.get_surface(), brown, (25, 720, 200, 15))
+                                text = self.font.render("Player 1\'s Earnings: " + f"{self.money}", True, black)
+                                pygame.display.get_surface().blit(text, (25, 720))
+                            else:
+                                pygame.draw.rect(pygame.display.get_surface(), brown, (25, 20, 200, 15))
+                                text = self.font.render("Player 2\'s Earnings: " + f"{self.money}", True, black)
+                                pygame.display.get_surface().blit(text, (25, 20))
                             return amount  # Player raises
                 # if they fold (they stop playing for the hand)
                 elif action == "fold":

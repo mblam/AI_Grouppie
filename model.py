@@ -6,10 +6,22 @@ import Chip
 import sys
 from aiLogic import aiBetting
 import printingDefs as printer
+import pygame
+import pygame
+import gameTest as gameTest
+import display.cardDisplay as cd
+import time
 
 STARTING_AMOUNT = 50
 BIG_BLIND_AMOUNT = 2
 SMALL_BLIND_AMOUNT = 1
+
+black = (0, 0, 0)
+brown = (111, 78, 55)
+green = (53, 101, 73)
+white = (255, 255, 255)
+
+gameState = gameTest.gameTest()
 
 class Player:
     def __init__(self, name, ai=False, color=None):
@@ -22,18 +34,24 @@ class Player:
         self.color = color
         self.prev_bet = self.bet
         if ai: self.name += " (AI)"
+        self.font = pygame.font.SysFont(None, 24)
+        self.display = []
 
     def getCard(self, card):
         self.hand.append(card)
 
     def printHand(self):
         Card.print_pretty_cards(self.hand)
+        
+    def getCurrCards(self):
+        for singleCard in self.hand:
+            self.display.append(Card.int_to_str(singleCard))
 
     def betting(self, highestBet, board, preFlop=False):
         self.prev_bet = self.bet
         # Handle the logic if the player is being controlled by the AI
         if self.AIPlayer:
-            # AI logic
+            # AI logic 
             amount = aiBetting(self, highestBet, preFlop, board)
 
             if amount == -1:  # Short circuit if folding
@@ -41,15 +59,29 @@ class Player:
             else:  # Modify class members appropriately
                 self.bet += amount
                 self.money -= amount
+                #error occurs around here
                 return self.bet
 
         print("Hand" + ": ", end="")
         self.printHand()
+        self.getCurrCards()
+        cd.printPlayerHand(self.name, self.display, self.money)
         print(f"\tYou have {self.money} chips.")
         print(f"\tThe highest bet is {highestBet} chips.")
-        
         # Display current bet made by the player
         print(f"\tYou have bet {self.bet} chips this round.")
+        
+        #pygame display
+        pygame.draw.rect(pygame.display.get_surface(), green, (1200, 50, 250, 15))
+        text = self.font.render(f"You have {self.money} chips.", True, white)
+        pygame.display.get_surface().blit(text, (1200, 50))
+        pygame.draw.rect(pygame.display.get_surface(), green, (1200, 70, 250, 15))
+        text = self.font.render(f"The highest bet is {highestBet} chips.", True, white)
+        pygame.display.get_surface().blit(text, (1200, 70))
+        pygame.draw.rect(pygame.display.get_surface(), green, (1200, 90, 250, 15))
+        text = self.font.render(f"You have bet {self.bet} chips this round.", True, white)
+        pygame.display.get_surface().blit(text, (1200, 90))
+        pygame.display.update()
 
         while True:
             if self.money <= highestBet - self.bet:
@@ -66,37 +98,91 @@ class Player:
                 else:
                     print("\tInvalid choice, please try again.")
             else:
-                action = input("\tWould you like to check [c], call [ca], raise [r], or fold [f]: ")
-                if action.lower() in ["c", "check"]:
+                action = ""
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if gameState.Check.rect.collidepoint(event.pos):
+                            action = "check"
+                        elif gameState.Call.rect.collidepoint(event.pos):
+                            action = "call"
+                        elif gameState.Raise.rect.collidepoint(event.pos):
+                            action = "raise"
+                        elif gameState.Fold.rect.collidepoint(event.pos):
+                            action = "fold"
+                if action == "check":
                     if highestBet > 0 and highestBet != self.bet:
-                        print("\tYou cannot check, there is already a bet.")
+                        text = self.font.render("You cannot check, there is already a bet.", True, black)
+                        pygame.display.get_surface().blit(text, (680, 30))
+                        pygame.display.update()
                     else:
-                        print(f"\t{self.name} checks.")
-                        return 0  # Player checks, returns how much the player increased the bet
-                elif action.lower() in ["ca", "call"]:
+                        text = self.font.render(f"{self.name} checks.", True, black)
+                        pygame.display.get_surface().blit(text, (680, 30))
+                        pygame.display.update()
+                        return 0 # Player checks, returns how much the player increased the bet
+                elif action == "call":
                     amount_to_call = highestBet - self.bet
                     self.money -= amount_to_call
-                    printer.debug(self.money)
                     self.bet = highestBet  # Update current bet to match the highest
-                    print(f"\t{self.name} calls {amount_to_call} chips.")
-                    return amount_to_call  # Player calls, returns the difference the player added
-                elif action.lower() in ["r", "raise"]:
+                    chip_text = self.font.render(f"{self.name} calls {amount_to_call} chips.", True, black)
+                    if self.name == "Player 1":
+                        pygame.draw.rect(pygame.display.get_surface(), brown, (25, 720, 200, 15))
+                        text = self.font.render("Player 1\'s Earnings: " + f"{self.money}", True, black)
+                        pygame.display.get_surface().blit(text, (25, 720))
+                        pygame.display.update()
+                    else:
+                        pygame.draw.rect(pygame.display.get_surface(), brown, (25, 20, 200, 15))
+                        text = self.font.render("Player 2\'s Earnings: " + f"{self.money}", True, black)
+                        pygame.display.get_surface().blit(text, (25, 20))
+                    pygame.display.get_surface().blit(chip_text, (680, 30))
+                    pygame.display.update()
+                    return highestBet  # Player calls
+                #if they raise (raise the bet higher)
+                elif action == "raise":
                     while True:
                         amount = int(input("\tHow much would you like to raise: "))
-                        if amount + self.bet <= highestBet or amount > self.money:
-                            print("\tYou must raise up to more than the current highest bet and not exceed your total chips.")
+                        pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
+                        text = self.font.render("How much would you like to raise?", True, black)
+                        pygame.display.get_surface().blit(text, (680, 30))
+                        if amount <= highestBet or amount > self.money:
+                            print("\tYou must raise more than the current highest bet and not exceed your total chips.")
+                            pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
+                            text = self.font.render("You must raise more than the current highest bet and not exceed your total chips.", True, black)
+                            pygame.display.get_surface().blit(text, (680, 30))
                         else:
                             self.money -= amount
                             self.bet += amount  # Update the current bet with the raise amount
-                            print(f"\t{self.name} raises to {self.bet} chips.")
+                            highestBet = self.bet  # Update highestBet
+                            pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
+                            text = self.font.render(f"{self.name} raises to {self.bet} chips.", True, black)
+                            pygame.display.get_surface().blit(text, (680, 30))
                             if preFlop:    # handles the money they already put up on the preflop
-                                return amount
-                            return amount  # Player raises, returns the difference the player added
-                elif action.lower() in ["f", "fold"]:
-                    print(f"\t{self.name} folds.")
+                                return self.bet
+                            if self.name == "Player 1":
+                                pygame.draw.rect(pygame.display.get_surface(), brown, (25, 720, 200, 15))
+                                text = self.font.render("Player 1\'s Earnings: " + f"{self.money}", True, black)
+                                pygame.display.get_surface().blit(text, (25, 720))
+                                pygame.display.update()
+                            else:
+                                pygame.draw.rect(pygame.display.get_surface(), brown, (25, 20, 200, 15))
+                                text = self.font.render("Player 2\'s Earnings: " + f"{self.money}", True, black)
+                                pygame.display.get_surface().blit(text, (25, 20))
+                                pygame.display.update()
+                            return amount  # Player raises
+                # if they fold (they stop playing for the hand)
+                elif action == "fold":
+                    text = self.font.render(f"{self.name} folds.", True, black)
+                    pygame.display.get_surface().blit(text, (680, 30))
+                    pygame.display.update()
                     return -1  # Player folds
+                elif action == "":
+                    pass
                 else:
-                    print("\tInvalid action, please try again.")
+                    text = self.font.render("Invalid action, please try again", True, black)
+                    pygame.display.get_surface().blit(text, (1150, 50))
+                    pygame.display.update()
 
 # Object that represents the overall state of the game
 class Table():
@@ -111,6 +197,8 @@ class Table():
         self.bigBlind = None
         self.smallBlind = None
         self.rotator = 0
+        self.font = pygame.font.SysFont(None, 24)
+        self.running = True
 
     # Initializes player objects and deals cards to them
     def initializePlayers(self, numPlayers, numAI):
@@ -134,15 +222,38 @@ class Table():
     def dealFirstRound(self):
         burn = self.deck.draw(1)
         self.board = self.deck.draw(3)
+        cards = self.printCurrCards()
+        cd.firstRoundBoard(cards)
             
     def dealSecondRound(self):
         burn = self.deck.draw(1)
         self.board.append(self.deck.draw(1)[0])
+        cards = self.printCurrCards()
+        cd.firstRoundBoard(cards)
 
     def dealThirdRound(self):
         self.board.append(self.deck.draw(1)[0])
+        cards = self.printCurrCards()
+        cd.firstRoundBoard(cards)
+        
+    def printCurrCards(self):
+        cards = []
+        for singleCard in self.board:
+            cards.append(Card.int_to_str(singleCard))
+        return cards
     
-
+    def updatePot(self, newPot):
+        pygame.draw.rect(pygame.display.get_surface(), green, (1245, 363, 200, 30))
+        pot_font = pygame.font.SysFont(None, 36)
+        main_pot = pot_font.render("The Pot: $" + str(newPot), True, white)
+        pygame.display.get_surface().blit(main_pot, (1245, 363))
+        pygame.display.update()
+    
+    def updateTextBelowPot(self, text):
+        pygame.draw.rect(pygame.display.get_surface(), green, (1200, 400, 250, 100))
+        pygame.display.get_surface().blit(text, (1200, 400))
+        pygame.display.update()
+    
     # Prints out the different players and their hands
     def printPlayers(self):
         for player in self.allPlayers:
@@ -153,6 +264,8 @@ class Table():
     def winner(self, player):
         player.money += self.pot
         print(player.name + " wins $" + str(self.pot))
+        text = self.font.render(player.name + " wins $" + str(self.pot), True, white)
+        pygame.display.get_surface().blit(text, (500, 200))
         printer.debug(player.money)
 
     def blindBetting(self, smallBlind, bigBlind):
@@ -193,7 +306,15 @@ class Table():
         current_player_index = self.rotator
 
         while True:
+            #reset all of the displays
+            self.updateTextBelowPot(self.font.render("", True, white))
+            pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
+            pygame.draw.rect(pygame.display.get_surface(), green, (1200, 50, 250, 15))
+            pygame.draw.rect(pygame.display.get_surface(), green, (1200, 70, 250, 15))
+            pygame.draw.rect(pygame.display.get_surface(), green, (1200, 90, 250, 15))
+            
             print("Pot:",self.pot)
+            self.updatePot(self.pot)
             current_player = players_in_round[current_player_index]
 
             # Skip player if they folded
@@ -202,10 +323,17 @@ class Table():
                 continue
 
             print()
+            time.sleep(1)
             print(printer.colored(f"{current_player.name}'s turn:", current_player.color))
+            pygame.draw.rect(pygame.display.get_surface(), brown, (1300, 30, 200, 15))
+            text = self.font.render(f"{current_player.name}'s turn", True, black)
+            pygame.display.get_surface().blit(text, (1300, 30))
             # Simply skips the current player if they don't have any money to bet
             if current_player.money == 0:
                 print(f"You have 0 chips and cannot make a play.")
+                text = self.font.render("You have 0 chips and cannot make a play.", True, black)
+                pygame.display.get_surface().blit(text, (680, 30))
+                pygame.display.update()
             # Otherwise, bet as normal
             else:
                 if not preFlop:  # Print board if cards are on board
@@ -213,27 +341,38 @@ class Table():
                     Card.print_pretty_cards(self.board)
 
                 bet = current_player.betting(highestBet, self.board, preFlop) # If increasing the bet, this represents the difference to the pot
-
+                
                 if bet == -1:  # Player folds
                     folded_players.add(current_player)
                     print(f"{current_player.name} folds.")
+                    text = self.font.render(f"{current_player.name} folds.", True, white)
+                    self.updateTextBelowPot(text)
                     # The other player wins
                     remaining_player = players_in_round[1 - current_player_index]
                     print(f"{remaining_player.name} wins, {current_player.name} folded.")
+                    text = self.font.render(f"{remaining_player.name} wins, {current_player.name} folded.", True, white)
+                    self.updateTextBelowPot(text)
                     self.winner(remaining_player)
                     return -1
                 elif bet + current_player.prev_bet > highestBet:  # Player raises
                     # Update the pot with the amount of the raise
                     self.pot += bet  # Add the difference between new bet and previous bet
+                    self.updatePot(self.pot)
                     highestBet = bet + current_player.prev_bet  # Update the highest bet to the new raise
                     print(f"{current_player.name} raises to {highestBet} chips.")
+                    text = self.font.render(f"{current_player.name} raises to {highestBet} chips.", True, white)
+                    self.updateTextBelowPot(text)
                 else:  # Player calls or checks
                     if bet != 0:  # They are calling the difference
                         call_amount = bet
                         self.pot += call_amount  # Accumulate the pot with the call amount
                         print(f"{current_player.name} calls {call_amount} chips.")
+                        text = self.font.render(f"{current_player.name} calls {call_amount} chips.", True, white)
+                        self.updateTextBelowPot(text)
                     else:
                         print(f"{current_player.name} checks.")
+                        text = self.font.render(f"{current_player.name} checks.", True, white)
+                        self.updateTextBelowPot(text)
 
                 # Ensure the player's bet is updated correctly, already updated by calling betting
                 # current_player.bet = highestBet  # Match the highest bet
@@ -245,12 +384,27 @@ class Table():
             if current_player_index == 0:  # If it returns to the first player
                 # Both players must have matched the highest bet
                 if players_in_round[0].bet == players_in_round[1].bet:
+                    time.sleep(1)
                     print("Both players have matched the highest bet, betting round complete.")
+                    pygame.draw.rect(pygame.display.get_surface(), green, (1200, 400, 250, 100))
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
+                    text = self.font.render("Both players have matched the highest bet, betting round complete.", True, black)
+                    pygame.display.get_surface().blit(text, (680, 30))
+                    time.sleep(2)
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
                     return highestBet
                 # Prevents an infinite loop where both players are out of money
                 elif players_in_round[0].money == 0 and players_in_round[1].money == 0:
+                    time.sleep(1)
                     print("Both players are out of money, betting round complete.")
+                    pygame.draw.rect(pygame.display.get_surface(), green, (1200, 400, 250, 100))
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
+                    text = self.font.render("Both players have matched the highest bet, betting round complete.", True, black)
+                    pygame.display.get_surface().blit(text, (680, 30))
+                    time.sleep(2)
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
                     return highestBet
+            time.sleep(2)
 
 
 
@@ -280,6 +434,9 @@ class Table():
 
                 printer.debug(str(self.pot)+"!")
                 print("Pre-Flop Betting")
+                text = self.font.render("Pre-Flop Betting", True, black)
+                pygame.display.get_surface().blit(text, (680, 10))
+                pygame.display.update()
                 highestBet = self.rotate_betting(highestBet, preFlop=True)
                 if highestBet == -1:
                     self.rotator = (self.rotator + 1) % 2
@@ -293,12 +450,30 @@ class Table():
                 case 1:
                     print("Dealing the flop")
                     self.dealFirstRound()
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 10, 130, 20))
+                    text = self.font.render("Dealing the flop", True, black)
+                    pygame.display.get_surface().blit(text, (680, 10))
+                    cards = self.printCurrCards()
+                    cd.firstRoundBoard(cards)
+                    pygame.display.update()
                 case 2:
                     print("Dealing the turn")
                     self.dealSecondRound()
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 10, 130, 20))
+                    text = self.font.render("Dealing the turn", True, black)
+                    pygame.display.get_surface().blit(text, (680, 10))
+                    cards = self.printCurrCards()
+                    cd.secondRoundBoard(cards)
+                    pygame.display.update()
                 case 3:
                     print("Dealing the river")
                     self.dealThirdRound()
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (680, 10, 130, 20))
+                    text = self.font.render("Dealing the river", True, black)
+                    pygame.display.get_surface().blit(text, (680, 10))
+                    cards = self.printCurrCards()
+                    cd.thirdRoundBoard(cards)
+                    pygame.display.update()
 
             print("***********************\n")
 
@@ -332,6 +507,9 @@ class Table():
 
     def startGame(self):
         while True:
+            
+            gameState.startDisplay(self.pot)
+            
             self.startRound()
 
             # Break out of the game loop if either of the players runs out of money
@@ -360,6 +538,8 @@ class Table():
 
 # -------------------------Initialization-------------------------------
 if __name__ == "__main__":
+    pygame.init()
+    pygame.display.set_mode((1500, 750))
     t = Table()
-    t.initializePlayers(2, 0)
+    t.initializePlayers(2, 1)
     t.startGame()

@@ -16,6 +16,7 @@ SMALL_BLIND_AMOUNT = 1
 black = (0, 0, 0)
 brown = (111, 78, 55)
 green = (53, 101, 73)
+white = (255, 255, 255)
 
 gameState = gameTest.gameTest()
 
@@ -197,12 +198,12 @@ class Table():
         burn = self.deck.draw(1)
         self.board.append(self.deck.draw(1)[0])
         cards = self.printCurrCards()
-        cd.secondRoundBoard(cards)
+        cd.firstRoundBoard(cards)
 
     def dealThirdRound(self):
         self.board.append(self.deck.draw(1)[0])
         cards = self.printCurrCards()
-        cd.secondRoundBoard(cards)
+        cd.firstRoundBoard(cards)
 
     def printCurrCards(self):
         cards = []

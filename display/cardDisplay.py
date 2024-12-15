@@ -75,6 +75,7 @@ def printPlayerHand(name, cards, money):
         #updates the screen
         #screen.blit(p1_earnings, (25, 720))
         screen.blit(w_chip, (50, 650))
+        pygame.draw.rect(screen, (53, 101, 73), (110, 667, 30, 30))
         screen.blit(chip_amt, (110, 667))
         y = 550
     else :

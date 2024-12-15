@@ -265,7 +265,7 @@ class Table():
         player.money += self.pot
         print(player.name + " wins $" + str(self.pot))
         text = self.font.render(player.name + " wins $" + str(self.pot), True, white)
-        pygame.display.get_surface().blit(text, (500, 200))
+        pygame.display.get_surface().blit(text, (680, 200))
         printer.debug(player.money)
 
     def blindBetting(self, smallBlind, bigBlind):
@@ -306,6 +306,7 @@ class Table():
         current_player_index = self.rotator
 
         while True:
+            pygame.display.update()
             #reset all of the displays
             self.updateTextBelowPot(self.font.render("", True, white))
             pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
@@ -316,6 +317,7 @@ class Table():
             print("Pot:",self.pot)
             self.updatePot(self.pot)
             current_player = players_in_round[current_player_index]
+            pygame.display.update()
 
             # Skip player if they folded
             if current_player in folded_players:
@@ -323,7 +325,6 @@ class Table():
                 continue
 
             print()
-            time.sleep(1)
             print(printer.colored(f"{current_player.name}'s turn:", current_player.color))
             pygame.draw.rect(pygame.display.get_surface(), brown, (1300, 30, 200, 15))
             text = self.font.render(f"{current_player.name}'s turn", True, black)
@@ -345,6 +346,7 @@ class Table():
                 if bet == -1:  # Player folds
                     folded_players.add(current_player)
                     print(f"{current_player.name} folds.")
+                    pygame.draw.rect(pygame.display.get_surface(), brown, (1300, 30, 200, 15))
                     text = self.font.render(f"{current_player.name} folds.", True, white)
                     self.updateTextBelowPot(text)
                     # The other player wins
@@ -384,7 +386,6 @@ class Table():
             if current_player_index == 0:  # If it returns to the first player
                 # Both players must have matched the highest bet
                 if players_in_round[0].bet == players_in_round[1].bet:
-                    time.sleep(1)
                     print("Both players have matched the highest bet, betting round complete.")
                     pygame.draw.rect(pygame.display.get_surface(), green, (1200, 400, 250, 100))
                     pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))
@@ -395,7 +396,6 @@ class Table():
                     return highestBet
                 # Prevents an infinite loop where both players are out of money
                 elif players_in_round[0].money == 0 and players_in_round[1].money == 0:
-                    time.sleep(1)
                     print("Both players are out of money, betting round complete.")
                     pygame.draw.rect(pygame.display.get_surface(), green, (1200, 400, 250, 100))
                     pygame.draw.rect(pygame.display.get_surface(), brown, (680, 30, 550, 15))

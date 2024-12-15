@@ -71,10 +71,7 @@ def printPlayerHand(name, cards, money):
     chip_amt = text.render(str(money), True, (255, 255, 255))
     i = 0
     y = 0
-    if name == "Player 1":
-        #displays Player's earning so far (hard coded number for now)
-        #p1_earnings = text.render("Player 1\'s Earnings: $10,000" , True, (255, 255, 255))
-        
+    if name == "Player 2":
         #updates the screen
         #screen.blit(p1_earnings, (25, 720))
         screen.blit(w_chip, (50, 650))

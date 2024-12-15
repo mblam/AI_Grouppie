@@ -44,6 +44,8 @@ class gameTest():
             c.draw_card(700, 305, "images/Card_back.png")
             c.draw_card(820, 305, "images/Card_back.png")
             c.draw_card(940, 305, "images/Card_back.png")
+            c.draw_card(640, 60, "images/Card_back.png")
+            c.draw_card(760, 60, "images/Card_back.png")
             
             #displays the buttons
             self.Check.createButton()

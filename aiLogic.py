@@ -38,6 +38,13 @@ class State:
     def bet_up_to_probability(self, probability=None):
         if probability is None:
             probability = self.probablility_of_winning(self.hand, self.board)
+
+        # If the best cards are on the table, give the chance of winning given that the other player has at least that
+        is_best, table_prob = self.best_on_table()
+        if is_best:
+            given = 1 - table_prob
+            probability = (probability - table_prob) / given
+
         max_willing = int(self.startingMoney * probability) - self.currentBet
         if max_willing <= self.min_to_play:
             return -1
@@ -56,7 +63,7 @@ class State:
             potential_probability = self.expected_final_hand(None)
             percent_increase = (potential_probability - probability) / probability
 
-            if probability <= .45:  # Weak hand
+            if probability <= .35:  # Weak hand
                 # If it has good potential, bet anyway
                 if percent_increase >= .2:
                     bet = self.bet_up_to_probability(potential_probability)
@@ -70,10 +77,6 @@ class State:
                 # Fold
                 else:
                     bet = -1
-
-        # Temper the bet if it's determined that the chances of winning are based on just the table cards
-        if self.best_on_table() and bet > 0:
-            bet = bet - (bet - self.min_to_play)/2
 
         return bet
 
@@ -135,7 +138,7 @@ class State:
                 avg_prob += self.probablility_of_winning(tempHand, self.board) * (1/2*52)
 
         # If the two probabilities are similar, return true
-        return abs(avg_prob - current_prob) < .01
+        return abs(avg_prob - current_prob) < .01, avg_prob
 
 
 
